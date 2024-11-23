@@ -4,9 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Layout } from "@/pages/dashboard/Layout";
+import { Navbar } from "@/components/Navbar";
 
 export function Patient() {
-    const userRole = "patient"; // Nilai tetap karena hanya untuk pasien
+    const userRole = "patient"; 
 
     const [file, setFile] = useState(null);
 
@@ -31,7 +32,7 @@ export function Patient() {
     };
 
     return (
-        <Layout userRole={userRole}>
+        <Layout userRole={userRole} showNavbar={false}>
             <Card className="w-full max-w-lg p-6 space-y-6 bg-white shadow-lg rounded-xl">
                 <h2 className="text-3xl font-bold text-gray-900">Patient Dashboard</h2>
                 <p>Upload your X-ray image here.</p>
