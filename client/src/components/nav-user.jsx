@@ -22,14 +22,21 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { CaretSortIcon } from "@radix-ui/react-icons"
+import { useAuth } from "@/context/AuthContext"  
 
 export function NavUser({
   user
 }) {
   const { isMobile } = useSidebar()
+  const { logout } = useAuth()  // Get the logout function from AuthContext
+
+  // Handle logout action
+  const handleLogout = () => {
+    logout()  // Call the logout function from AuthContext
+  }
 
   return (
-    (<SidebarMenu>
+    <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -56,13 +63,13 @@ export function NavUser({
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
-    </SidebarMenu>)
+    </SidebarMenu>
   );
 }

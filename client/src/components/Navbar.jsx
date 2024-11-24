@@ -6,50 +6,68 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export function Navbar() {
+    const navigate = useNavigate()
+    const { user, logout } = useAuth()
+    const role = user?.role;
+    let route = ''
+    if (role === "pasien") {
+        route = 'patient'
+    } else if (role === "dokter")
+        route = 'doctor'
+    const handleLogout = () => {
+        logout();
+    }
+
     return (
         <nav className="w-full bg-white border-b border-gray-200 shadow sticky top-0 z-50">
             <div className="container mx-auto px-4 flex justify-between items-center h-16">
                 {/* Logo */}
-                <div className="text-2xl font-bold text-blue-600">HospitalMS</div>
+                <div className="text-2xl font-bold text-black">HospitalMS</div>
 
                 {/* Navigation Links */}
                 <div className="hidden md:flex gap-6">
-                    <a href="#" className="text-gray-700 hover:text-blue-600">
-                        Dashboard
+                    <a href="#" className="text-gray-700 hover:text-black">
+                        About
                     </a>
-                    <a href="#" className="text-gray-700 hover:text-blue-600">
-                        Patients
-                    </a>
-                    <a href="#" className="text-gray-700 hover:text-blue-600">
-                        Appointments
-                    </a>
-                    <a href="#" className="text-gray-700 hover:text-blue-600">
-                        Reports
+                    <a href="#" className="text-gray-700 hover:text-black">
+                        Services
                     </a>
                 </div>
 
                 {/* Actions */}
                 <div className="flex items-center gap-4">
-                    {/* Dropdown Menu */}
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline">Nama</Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuItem>View Profile</DropdownMenuItem>
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Logout</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-
-                    {/* Login Button */}
-                    <Link to="/login">
-                        <Button variant="default" className="bg-blue-600 text-white hover:bg-blue-700">
-                            Login
-                        </Button>
-                    </Link>
+                    {user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" className="border-0 focus:outline-none focus:ring-0 ring-0">
+                                    {user.name} | {user.email}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                className="min-w-[180px] bg-white rounded-lg shadow-lg border border-gray-200 mt-3"
+                                side="bottom"
+                                align="end"
+                                sideOffset={4}
+                            >
+                                <DropdownMenuItem className="text-gray-700 hover:bg-gray-100 px-4 py-2">
+                                    <Link to={`/${route}/dashboard`} className="block w-full">Dashboard</Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Button onClick={handleLogout} className="w-full text-left px-4 py-2 text-white hover:bg-gray-800">Logout</Button>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <Link to="/login">
+                            <Button variant="default" className="bg-black text-white hover:bg-black">
+                                Login
+                            </Button>
+                        </Link>
+                    )}
                 </div>
             </div>
         </nav>

@@ -4,19 +4,19 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(
-        !!localStorage.getItem('access_token')
+        !!localStorage.getItem('token')
     );
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
 
     const login = (token, userData) => {
-        localStorage.setItem('access_token', token);
+        localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(userData));
         setIsAuthenticated(true);
         setUser(userData);
     };
 
     const logout = () => {
-        localStorage.removeItem('access_token');
+        localStorage.removeItem('token');
         localStorage.removeItem('user');
         setIsAuthenticated(false);
         setUser(null);
