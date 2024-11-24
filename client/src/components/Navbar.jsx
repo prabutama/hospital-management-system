@@ -5,10 +5,11 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
 
 export function Navbar() {
     return (
-        <nav className="w-full bg-white border-b border-gray-200 shadow">
+        <nav className="w-full bg-white border-b border-gray-200 shadow sticky top-0 z-50">
             <div className="container mx-auto px-4 flex justify-between items-center h-16">
                 {/* Logo */}
                 <div className="text-2xl font-bold text-blue-600">HospitalMS</div>
@@ -34,7 +35,7 @@ export function Navbar() {
                     {/* Dropdown Menu */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline">Profile</Button>
+                            <Button variant="outline">Nama</Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuItem>View Profile</DropdownMenuItem>
@@ -44,9 +45,11 @@ export function Navbar() {
                     </DropdownMenu>
 
                     {/* Login Button */}
-                    <Button variant="default" className="bg-blue-600 text-white hover:bg-blue-700">
-                        Login
-                    </Button>
+                    <Link to="/login">
+                        <Button variant="default" className="bg-blue-600 text-white hover:bg-blue-700">
+                            Login
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </nav>

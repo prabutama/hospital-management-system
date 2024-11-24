@@ -6,7 +6,9 @@ import { Register } from "@/pages/auth/Register";
 import { Patient } from "@/pages/dashboard/Patient";
 // import { DashboardStaff } from "@/pages/dashboard/StaffDashboard";
 import { Layout } from "@/pages/dashboard/Layout";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import PatientHistory from "@/pages/dashboard/PatientHistory";
+import DoctorList from "@/pages/dashboard/DoctorList";
+import { Doctor } from "@/pages/dashboard/Doctor";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -21,23 +23,35 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register />,
     },
-    // {
-    //     path: "/doctor/dashboard",
-    //     element: (
-    //         <DashboardLayout userRole="doctor">
-    //             <DashboardDoctor />
-    //         </DashboardLayout>
-    //     ),
-    // },
+    {
+        path: "/doctor/dashboard",
+        element: (
+            <Layout userRole="doctor" showNavbar={true} showSidebar={true}>
+                <Doctor />
+            </Layout>
+        ),
+    },
     {
         path: "/patient/dashboard",
         element: (
-            <SidebarProvider>
-                <Layout userRole="patient">
-                    <Patient />
-                </Layout>
-            </SidebarProvider>
+            <Layout userRole="patient" showNavbar={true} showSidebar={true}>
+                <Patient />
+            </Layout>
         ),
+        children: [
+            {
+                path: "history",
+                element: (
+                    <PatientHistory />
+                ),
+            },
+            {
+                path: "doctors",
+                element: (
+                    <DoctorList />
+                ),
+            },
+        ],
     },
     // {
     //     path: "/staff/dashboard",
