@@ -8,6 +8,7 @@ import { Patient } from "@/pages/dashboard/Patient";
 import { Layout } from "@/pages/dashboard/Layout";
 import PatientHistory from "@/pages/dashboard/PatientHistory";
 import DoctorList from "@/pages/dashboard/DoctorList";
+import { Doctor } from "@/pages/dashboard/Doctor";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -22,14 +23,14 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register />,
     },
-    // {
-    //     path: "/doctor/dashboard",
-    //     element: (
-    //         <DashboardLayout userRole="doctor">
-    //             <DashboardDoctor />
-    //         </DashboardLayout>
-    //     ),
-    // },
+    {
+        path: "/doctor/dashboard",
+        element: (
+            <Layout userRole="doctor" showNavbar={true} showSidebar={true}>
+                <Doctor />
+            </Layout>
+        ),
+    },
     {
         path: "/patient/dashboard",
         element: (

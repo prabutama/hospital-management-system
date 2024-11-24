@@ -16,8 +16,8 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export function Layout({ children = [], showNavbar = false, showSidebar = false }) {
-    const role = "patient"
+export function Layout({ children = [], showNavbar = false, showSidebar = false, userRole }) {
+    const role = userRole.toLowerCase()
     return (
         <SidebarProvider>
             {showSidebar && <AppSidebar />}
@@ -40,7 +40,7 @@ export function Layout({ children = [], showNavbar = false, showSidebar = false 
                                     </BreadcrumbItem>
                                     <BreadcrumbSeparator className="hidden md:block" />
                                     <BreadcrumbItem>
-                                        <BreadcrumbPage>Pasien</BreadcrumbPage>
+                                        <BreadcrumbPage>{ userRole }</BreadcrumbPage>
                                     </BreadcrumbItem>
                                 </BreadcrumbList>
                             </Breadcrumb>
