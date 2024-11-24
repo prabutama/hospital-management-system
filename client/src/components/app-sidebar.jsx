@@ -81,7 +81,7 @@ const data = {
         },
         {
           title: "List Pemeriksaan",
-          url: "#",
+          url: "/doctor/dashboard",
           icon: LayoutList,
         },
       ],
