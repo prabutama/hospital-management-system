@@ -4,12 +4,12 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbPage, BreadcrumbS
 import { Separator } from "@/components/ui/separator"
 import { Navbar } from "@/components/Navbar"
 
-export function Layout({ children, breadcrumbs = [], showNavbar = true }) {
+export function Layout({ children, breadcrumbs = [], showNavbar = true, showSidebar = true }) {
     return (
         <div className="flex min-h-screen w-full">
             {/* Sidebar */}
             <div className="relative">
-                <AppSidebar />
+                {showSidebar && <AppSidebar />}
             </div>
 
             <div className="flex flex-col w-full">
