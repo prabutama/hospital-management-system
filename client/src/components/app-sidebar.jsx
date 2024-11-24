@@ -4,7 +4,9 @@ import {
   Menu,
   Home,
   SquareActivity,
-  Users
+  Users,
+  ClipboardList,
+  LayoutList
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -23,7 +25,7 @@ const data = {
     email: "amba@example.com",
     avatar: "https://github.com/shadcn.png",
   },
-  navMain: [
+  navPatient: [
     {
       title: "Menu",
       url: "/",
@@ -54,18 +56,52 @@ const data = {
       ],
     },
   ],
+  navDoctor: [
+    {
+      title: "Menu",
+      url: "/",
+      icon: Menu,
+      items: [
+        {
+          title: "Home",
+          url: "/",
+          icon: Home,
+        },
+      ],
+    },
+    {
+      title: "Kesehatan",
+      url: "#",
+      icon: SquareActivity,
+      items: [
+        {
+          title: "Pengajuan Pemeriksaan",
+          url: "#",
+          icon: ClipboardList,
+        },
+        {
+          title: "List Pemeriksaan",
+          url: "#",
+          icon: LayoutList,
+        },
+      ],
+    },
+  ],
 }
+
+
 
 export function AppSidebar({
   ...props
 }) {
+  const userRole = props.userRole
   return (
     (<Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <NavUser user={data.user} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={userRole === "doctor" ? data.navDoctor : data.navPatient} />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>)

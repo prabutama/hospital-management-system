@@ -53,7 +53,6 @@ export function Doctor() {
 
     return (
         <div className="flex flex-col gap-4">
-            <h1 className="text-3xl font-bold">Doctor Dashboard</h1>
             <div className="shadow-md rounded-xl overflow-hidden border border-gray-300">
                 <table
                     className="table-auto w-full"
