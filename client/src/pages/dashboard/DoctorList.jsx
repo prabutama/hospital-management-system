@@ -19,6 +19,7 @@ export default function DoctorList() {
     const { user } = useAuth();
 
     useEffect(() => {
+
         const fetchDoctors = async () => {
             const token = localStorage.getItem("token");
             try {
@@ -62,18 +63,59 @@ export default function DoctorList() {
             return;
         }
 
+        console.log("user:", user);
+
         if (formAction === "consult") {
-            setAlertMessage(`Konsultasi dengan dokter ${selectedDoctor.dokter_id} diajukan dengan keluhan: ${consultationRequest}`);
-            setAlertType("success");
+            try {
+                // Logging data sebelum request
+                console.log("Request data:", {
+                    dokter_id: selectedDoctor.dokter_id,
+                    pasien_id: user.id,
+                    complaint: consultationRequest,
+                    schedule_id: selectedDoctor.schedule_id,
+                });
+
+                // Mengirim request
+                const response = await axios.post(
+                    "http://localhost:3000/api/consultations",
+                    {
+                        dokter_id: selectedDoctor.dokter_id,
+                        pasien_id: user.id,
+                        complaint: consultationRequest,
+                        schedule_id: selectedDoctor.schedule_id,
+                    },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                        },
+                    }
+                );
+
+                console.log("Response data:", response.data);
+
+                // Menampilkan alert sukses
+                setAlertMessage(
+                    `Konsultasi dengan dokter ${selectedDoctor.dokter_id} diajukan dengan keluhan: ${consultationRequest}`
+                );
+                setAlertType("success");
+            } catch (error) {
+                // Logging error detail untuk debugging
+                console.error("Error submitting consultation request:", error.response?.data || error.message);
+
+                // Menampilkan alert error
+                setAlertMessage(
+                    error.response?.data?.message || "Error submitting consultation request. Please try again later."
+                );
+                setAlertType("error");
+            }
         } else {
             try {
-                // Format waktu untuk menghindari error format waktu
                 const formatTime = (time) => {
                     const [hours, minutes] = time.split(":");
-                    return `${hours}:${minutes}:00`; // Tambahkan detik (00) untuk memastikan format HH:mm:ss
+                    return `${hours}:${minutes}:00`;
                 };
 
-                // Update jadwal dokter
                 const response = await axios.put(
                     `http://localhost:3000/api/consultation-schedule/staff/${selectedDoctor.schedule_id}`,
                     {
@@ -120,37 +162,38 @@ export default function DoctorList() {
             )}
 
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                {doctors.map((doctor) => (
-                    <Card key={doctor.dokter_id} className="shadow-lg rounded-lg border border-gray-200">
-                        <CardHeader className="bg-gray-100 p-4 rounded-t-lg">
-                            <CardTitle className="text-xl font-semibold text-gray-800">
-                                Dr. {toCapitalCase(doctor.Doctor.name)}
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-4">
-                            <p className="text-sm text-gray-600">
-                                <strong>Jadwal Konsultasi:</strong> {formatTimeDisplay(doctor.start_time)} - {formatTimeDisplay(doctor.end_time)}
-                            </p>
-                        </CardContent>
-                        <CardFooter className="p-4">
-                            {user.role === "patient" ? (
-                                <Button
-                                    className="w-full bg-black text-white hover:bg-black"
-                                    onClick={() => handleConsultationRequest(doctor)}
-                                >
-                                    Ajukan Konsultasi
-                                </Button>
-                            ) : user.role === "staff" ? (
-                                <Button
-                                    className="w-full bg-black text-white hover:bg-black"
-                                    onClick={() => handleEditSchedule(doctor)}
-                                >
-                                    Edit Jadwal
-                                </Button>
-                            ) : null}
-                        </CardFooter>
-                    </Card>
-                ))}
+                {
+                    doctors.map((doctor) => (
+                        <Card key={doctor.dokter_id} className="shadow-lg rounded-lg border border-gray-200">
+                            <CardHeader className="bg-gray-100 p-4 rounded-t-lg">
+                                <CardTitle className="text-xl font-semibold text-gray-800">
+                                    Dr. {toCapitalCase(doctor.Doctor.name)}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-4">
+                                <p className="text-sm text-gray-600">
+                                    <strong>Jadwal Konsultasi:</strong> {formatTimeDisplay(doctor.start_time)} - {formatTimeDisplay(doctor.end_time)}
+                                </p>
+                            </CardContent>
+                            <CardFooter className="p-4">
+                                {user.role === "patient" ? (
+                                    <Button
+                                        className="w-full bg-black text-white hover:bg-black"
+                                        onClick={() => handleConsultationRequest(doctor)}
+                                    >
+                                        Ajukan Konsultasi
+                                    </Button>
+                                ) : user.role === "staff" ? (
+                                    <Button
+                                        className="w-full bg-black text-white hover:bg-black"
+                                        onClick={() => handleEditSchedule(doctor)}
+                                    >
+                                        Edit Jadwal
+                                    </Button>
+                                ) : null}
+                            </CardFooter>
+                        </Card>
+                    ))}
             </div>
 
             {/* Dialog for form */}

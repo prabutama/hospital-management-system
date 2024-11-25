@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useNavigate } from "react-router-dom";
 
 export default function AddDoctor() {
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState({ visible: false, variant: "", title: "", message: "" });
+    const navigate = useNavigate();
     const [doctorData, setDoctorData] = useState({
         doctor_name: "",
         start_time: "",
@@ -83,7 +85,6 @@ export default function AddDoctor() {
                 message: "Data dokter berhasil ditambahkan!",
             });
 
-            // Reset form setelah berhasil
             setDoctorData({
                 doctor_name: "",
                 start_time: "",
@@ -91,9 +92,7 @@ export default function AddDoctor() {
                 email: "",
                 password: "",
             });
-
-            // Sembunyikan alert otomatis setelah beberapa detik
-            setTimeout(() => setAlert({ visible: false, variant: "", title: "", message: "" }), 3000);
+            // setTimeout(() => setAlert({ visible: false, variant: "", title: "", message: "" }), 2000);
         } catch (err) {
             setAlert({
                 visible: true,
@@ -104,6 +103,11 @@ export default function AddDoctor() {
         } finally {
             setLoading(false);
         }
+
+        setTimeout(() => {
+            setAlert({ visible: false, variant: "", title: "", message: "" });
+            navigate("/staff/dashboard/doctors");
+        }, 2000);
     };
 
     return (
