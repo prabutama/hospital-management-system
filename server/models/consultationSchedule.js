@@ -17,25 +17,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         onDelete: "CASCADE",
       },
-      pasien_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
-      status: {
-        type: DataTypes.ENUM(
-          "tersedia",
-          "booked",
-          "rejected",
-          "accepted",
-          "selesai"
-        ),
-        allowNull: false,
-        defaultValue: "tersedia",
-      },
       start_time: {
         type: DataTypes.TIME,
         allowNull: false,
