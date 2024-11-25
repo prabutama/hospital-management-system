@@ -115,9 +115,7 @@ exports.updateScheduleByStaff = async (req, res) => {
 
 exports.updateScheduleByDoctor = async (req, res) => {
   const { schedule_id } = req.params;
-  const { status } = req.body;
 
-  const validStatus = ["rejected", "accepted", "selesai"];
   if (!validStatus.includes(status)) {
     return res.status(400).json({
       message:
