@@ -1,6 +1,6 @@
 ## GET DOCTOR DATA
 
-GET /api/doctor
+GET /api/consultation-schedule
 
 ```json
   [

@@ -12,7 +12,6 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use("/api/", authRoutes);
-app.use("/api/", consultationRoutes);
 app.use("/api/consultation-schedule", scheduleRoutes);
 
 app.listen(3000, () => {
