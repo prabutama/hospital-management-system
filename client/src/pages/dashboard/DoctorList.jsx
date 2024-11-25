@@ -63,47 +63,33 @@ export default function DoctorList() {
             return;
         }
 
-        console.log("user:", user);
-
         if (formAction === "consult") {
             try {
-                // Logging data sebelum request
-                console.log("Request data:", {
-                    dokter_id: selectedDoctor.dokter_id,
-                    pasien_id: user.id,
-                    complaint: consultationRequest,
-                    schedule_id: selectedDoctor.schedule_id,
-                });
 
-                // Mengirim request
                 const response = await axios.post(
-                    "http://localhost:3000/api/consultations",
+                    "http://localhost:3000/api/consultation",
                     {
-                        dokter_id: selectedDoctor.dokter_id,
-                        pasien_id: user.id,
+                        doctor_id: selectedDoctor.dokter_id,
+                        patient_id: user.id,
                         complaint: consultationRequest,
                         schedule_id: selectedDoctor.schedule_id,
                     },
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json",
                         },
                     }
                 );
 
                 console.log("Response data:", response.data);
 
-                // Menampilkan alert sukses
                 setAlertMessage(
                     `Konsultasi dengan dokter ${selectedDoctor.dokter_id} diajukan dengan keluhan: ${consultationRequest}`
                 );
                 setAlertType("success");
             } catch (error) {
-                // Logging error detail untuk debugging
                 console.error("Error submitting consultation request:", error.response?.data || error.message);
 
-                // Menampilkan alert error
                 setAlertMessage(
                     error.response?.data?.message || "Error submitting consultation request. Please try again later."
                 );
