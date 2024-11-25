@@ -13,32 +13,35 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "consultations",
+          model: "consultations", // Nama tabel consultations
           key: "consultation_id",
         },
         onDelete: "CASCADE",
+        onUpdate: "CASCADE", // Tambahkan onUpdate untuk menjaga relasi tetap sinkron
       },
       dokter_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "users",
+          model: "users", // Nama tabel users
           key: "user_id",
         },
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       pasien_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: "users",
+          model: "users", // Nama tabel users
           key: "user_id",
         },
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
       },
       response: {
         type: Sequelize.STRING(300),
-        allowNull: false,
+        allowNull: true, // Disesuaikan agar respons bisa nullable jika belum ada respons
       },
     });
   },

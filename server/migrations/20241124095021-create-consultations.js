@@ -9,35 +9,57 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      schedule_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "consultation_schedule",
-          key: "schedule_id",
-        },
-        onDelete: "CASCADE",
-      },
       complaint: {
         type: Sequelize.STRING(300),
         allowNull: false,
       },
-      x_ray: {
-        type: Sequelize.STRING(200),
-        allowNull: true,
-      },
-      x_ray_label: {
-        type: Sequelize.STRING(30),
-        allowNull: true,
-      },
       response: {
         type: Sequelize.STRING(300),
+        allowNull: true, // Respons mungkin belum tersedia saat konsultasi dibuat
+      },
+      pasien_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: "users", // Nama tabel user di database
+          key: "user_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      dokter_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "users", // Nama tabel user di database
+          key: "user_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      schedule_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "consultation_schedule", // Nama tabel consultation_schedule di database
+          key: "schedule_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
+      status: {
+        type: Sequelize.ENUM("pending", "accepted", "rejected"),
+        allowNull: false,
+        defaultValue: "pending",
       },
     });
   },
 
   down: async (queryInterface, Sequelize) => {
+    // Hapus ENUM terlebih dahulu untuk menghindari masalah
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_consultations_status";');
+
+    // Hapus tabel consultations
     await queryInterface.dropTable("consultations");
   },
 };
