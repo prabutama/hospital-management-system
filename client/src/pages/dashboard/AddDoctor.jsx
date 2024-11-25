@@ -3,9 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 export default function AddDoctor() {
     const [loading, setLoading] = useState(false);
+    const [alert, setAlert] = useState({ visible: false, variant: "", title: "", message: "" });
     const [doctorData, setDoctorData] = useState({
         doctor_name: "",
         start_time: "",
@@ -25,13 +27,34 @@ export default function AddDoctor() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
+
+        if (!doctorData.doctor_name || !doctorData.email || !doctorData.password) {
+            setAlert({
+                visible: true,
+                variant: "error",
+                title: "Validasi Gagal",
+                message: "Semua field wajib diisi.",
+            });
+            return;
+        }
+
+        if (!doctorData.start_time || !doctorData.end_time || doctorData.start_time >= doctorData.end_time) {
+            setAlert({
+                visible: true,
+                variant: "error",
+                title: "Waktu Tidak Valid",
+                message: "Pastikan waktu mulai dan selesai diisi dengan benar.",
+            });
+            return;
+        }
 
         const formattedData = {
             ...doctorData,
             start_time: formatTime(doctorData.start_time),
             end_time: formatTime(doctorData.end_time),
         };
+
+        setLoading(true);
 
         try {
             const response = await fetch("http://localhost:3000/api/consultation-schedule", {
@@ -43,16 +66,24 @@ export default function AddDoctor() {
             });
 
             if (!response.ok) {
-                const error = await response.json();
-                console.error("Error:", error);
-                alert("Gagal menambahkan data dokter. Silakan coba lagi.");
+                const error = await response.json().catch(() => null);
+                setAlert({
+                    visible: true,
+                    variant: "error",
+                    title: "Gagal",
+                    message: error?.message || "Terjadi kesalahan pada server.",
+                });
                 return;
             }
 
-            const result = await response.json();
-            console.log("Doctor Data Submitted:", result);
+            setAlert({
+                visible: true,
+                variant: "success",
+                title: "Berhasil",
+                message: "Data dokter berhasil ditambahkan!",
+            });
 
-            alert("Data dokter berhasil ditambahkan!");
+            // Reset form setelah berhasil
             setDoctorData({
                 doctor_name: "",
                 start_time: "",
@@ -60,9 +91,16 @@ export default function AddDoctor() {
                 email: "",
                 password: "",
             });
+
+            // Sembunyikan alert otomatis setelah beberapa detik
+            setTimeout(() => setAlert({ visible: false, variant: "", title: "", message: "" }), 3000);
         } catch (err) {
-            console.error("Error:", err);
-            alert("Terjadi kesalahan saat menghubungkan ke server.");
+            setAlert({
+                visible: true,
+                variant: "error",
+                title: "Error",
+                message: "Terjadi kesalahan saat menghubungkan ke server.",
+            });
         } finally {
             setLoading(false);
         }
@@ -71,6 +109,15 @@ export default function AddDoctor() {
     return (
         <div className="flex">
             <Card className="w-full max-w-lg shadow-lg">
+                {alert.visible && (
+                    <Alert
+                        className="w-[97%] mx-auto mt-2"
+                        variant={alert.variant === "success" ? "default" : "destructive"}
+                    >
+                        <AlertTitle>{alert.title}</AlertTitle>
+                        <AlertDescription>{alert.message}</AlertDescription>
+                    </Alert>
+                )}
                 <CardHeader>
                     <CardTitle className="text-lg font-bold">Tambah Dokter</CardTitle>
                 </CardHeader>
@@ -140,8 +187,12 @@ export default function AddDoctor() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex justify-end">
-                        <Button type="submit" className="bg-black text-white hover:gray-800" disabled={loading}>
-                            {loading ? "Loading..." : "Tambahkan Dokter"}
+                        <Button type="submit" className="bg-black text-white hover:gray-800 flex items-center" disabled={loading}>
+                            {loading ? (
+                                <>
+                                    <span className="loader mr-2"></span> Loading...
+                                </>
+                            ) : "Tambahkan Dokter"}
                         </Button>
                     </CardFooter>
                 </form>
