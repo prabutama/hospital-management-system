@@ -20,8 +20,7 @@ export function Patient() {
             alert("Please select a file before uploading.");
             return;
         }
-
-        // Process file upload to server or API here
+        
         console.log("File uploaded:", file);
     };
 

@@ -26,7 +26,7 @@ export function Register() {
         setLoading(true);
 
         try {
-            await axios.post("http://localhost:3000/register", {
+            await axios.post("http://localhost:3000/api/register", {
                 name,
                 email,
                 password,

@@ -6,7 +6,8 @@ import {
   SquareActivity,
   Users,
   ClipboardList,
-  LayoutList
+  LayoutList,
+  UserRoundPlus
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -91,6 +92,42 @@ export function AppSidebar({
         ],
       },
     ],
+    navStaff: [
+      {
+        title: "Menu",
+        url: "/",
+        icon: Menu,
+        items: [
+          {
+            title: "Home",
+            url: "/",
+            icon: Home,
+          },
+        ],
+      },
+      {
+        title: "Kesehatan",
+        url: "#",
+        icon: SquareActivity,
+        items: [
+          {
+            title: "Pengajuan Pemeriksaan",
+            url: "#",
+            icon: ClipboardList,
+          },
+          {
+            title: "List Dokter",
+            url: "/staff/dashboard/doctors",
+            icon: LayoutList,
+          },
+          {
+            title: "Tambahkan Dokter",
+            url: "/staff/dashboard/add-doctor",
+            icon: UserRoundPlus,
+          }
+        ],
+      },
+    ],
   }
 
   return (
@@ -99,7 +136,7 @@ export function AppSidebar({
         <NavUser user={data.user} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={user?.role === "dokter" ? data.navDoctor : data.navPatient} />
+        <NavMain items={user?.role === "dokter" ? data.navDoctor : user?.role === "staff" ? data.navStaff : data.navPatient} />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>)

@@ -11,6 +11,8 @@ import DoctorList from "@/pages/dashboard/DoctorList";
 import { Doctor } from "@/pages/dashboard/Doctor";
 import PrivateRoute from "./PrivateRoute";
 import BlockedRoute from "./BlockedRoute";
+import { Staff } from "@/pages/dashboard/Staff";
+import AddDoctor from "@/pages/dashboard/AddDoctor";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -59,14 +61,36 @@ const router = createBrowserRouter([
             },
         ],
     },
-    // {
-    //     path: "/staff/dashboard",
-    //     element: (
-    //         <DashboardLayout userRole="staff">
-    //             <DashboardStaff />
-    //         </DashboardLayout>
-    //     ),
-    // },
+    {
+        path: "/staff/dashboard",
+        element: (
+            <PrivateRoute>
+                <Layout userRole="staff" showNavbar={true} showSidebar={true}>
+                    <Staff />
+                </Layout>
+            </PrivateRoute>
+        ),
+        children: [
+            {
+                path: "history",
+                element: (
+                    <PatientHistory />
+                ),
+            },
+            {
+                path: "doctors",
+                element: (
+                    <DoctorList />
+                ),
+            },
+            {
+                path: "add-doctor",
+                element: (
+                    <AddDoctor />
+                ),
+            },
+        ],
+    },
 ]);
 
 export default router;
