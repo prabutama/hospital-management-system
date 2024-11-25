@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AddDoctor() {
+    const [loading, setLoading] = useState(false);
     const [doctorData, setDoctorData] = useState({
-        name: "",
+        doctor_name: "",
         start_time: "",
         end_time: "",
         email: "",
@@ -19,18 +19,53 @@ export default function AddDoctor() {
         setDoctorData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log("Doctor Data Submitted: ", doctorData);
+    const formatTime = (time) => {
+        return time ? `${time}:00` : "";
+    };
 
-        alert("Data dokter berhasil ditambahkan!");
-        setDoctorData({
-            name: "",
-            start_time: "",
-            end_time: "",
-            email: "",
-            password: "",
-        });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        const formattedData = {
+            ...doctorData,
+            start_time: formatTime(doctorData.start_time),
+            end_time: formatTime(doctorData.end_time),
+        };
+
+        try {
+            const response = await fetch("http://localhost:3000/api/consultation-schedule", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formattedData),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                console.error("Error:", error);
+                alert("Gagal menambahkan data dokter. Silakan coba lagi.");
+                return;
+            }
+
+            const result = await response.json();
+            console.log("Doctor Data Submitted:", result);
+
+            alert("Data dokter berhasil ditambahkan!");
+            setDoctorData({
+                doctor_name: "",
+                start_time: "",
+                end_time: "",
+                email: "",
+                password: "",
+            });
+        } catch (err) {
+            console.error("Error:", err);
+            alert("Terjadi kesalahan saat menghubungkan ke server.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -42,19 +77,18 @@ export default function AddDoctor() {
                 <form onSubmit={handleSubmit}>
                     <CardContent className="space-y-4">
                         <div>
-                            <Label htmlFor="name">Nama Dokter</Label>
+                            <Label htmlFor="doctor_name">Nama Dokter</Label>
                             <Input
                                 type="text"
-                                id="name"
-                                name="name"
+                                id="doctor_name"
+                                name="doctor_name"
                                 placeholder="Masukkan nama dokter"
-                                value={doctorData.name}
+                                value={doctorData.doctor_name}
                                 onChange={handleChange}
                                 required
                             />
                         </div>
 
-                        {/* Waktu Mulai */}
                         <div>
                             <Label htmlFor="start_time">Waktu Mulai</Label>
                             <Input
@@ -67,7 +101,6 @@ export default function AddDoctor() {
                             />
                         </div>
 
-                        {/* Waktu Selesai */}
                         <div>
                             <Label htmlFor="end_time">Waktu Selesai</Label>
                             <Input
@@ -81,22 +114,22 @@ export default function AddDoctor() {
                         </div>
 
                         <div>
-                            <Label htmlFor="name">Email</Label>
+                            <Label htmlFor="email">Email</Label>
                             <Input
-                                type="text"
+                                type="email"
                                 id="email"
                                 name="email"
                                 placeholder="Masukkan email dokter"
-                                value={doctorData.name}
+                                value={doctorData.email}
                                 onChange={handleChange}
                                 required
                             />
                         </div>
 
                         <div>
-                            <Label htmlFor="name">Password</Label>
+                            <Label htmlFor="password">Password</Label>
                             <Input
-                                type="text"
+                                type="password"
                                 id="password"
                                 name="password"
                                 placeholder="Masukkan password dokter"
@@ -107,8 +140,8 @@ export default function AddDoctor() {
                         </div>
                     </CardContent>
                     <CardFooter className="flex justify-end">
-                        <Button type="submit" className="bg-black text-white hover:gray-800">
-                            Tambahkan Dokter
+                        <Button type="submit" className="bg-black text-white hover:gray-800" disabled={loading}>
+                            {loading ? "Loading..." : "Tambahkan Dokter"}
                         </Button>
                     </CardFooter>
                 </form>

@@ -11,7 +11,7 @@ const {
   updateScheduleByPatient,
 } = require("../controllers/scheduleController");
 
-router.post("/", authenticateToken, checkRole(["staff"]), createDoctorAndSchedule );
+router.post("/", createDoctorAndSchedule );
 router.get(
   "/",
   authenticateToken, 
