@@ -60,14 +60,7 @@ exports.getSchedules = async (req, res) => {
 // Update Schedule by Staff Function
 exports.updateScheduleByStaff = async (req, res) => {
   const { schedule_id } = req.params;
-  const { dokter_name, date, status, start_time, end_time } = req.body;
-
-  const validStatus = ["tersedia", "booked"];
-  if (!validStatus.includes(status)) {
-    return res.status(400).json({
-      message: "Invalid status. Allowed values are 'tersedia', 'booked'.",
-    });
-  }
+  const { dokter_name, start_time, end_time } = req.body;
 
   try {
     const findDokter = await User.findOne({
