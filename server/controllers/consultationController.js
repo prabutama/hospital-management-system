@@ -61,3 +61,104 @@ exports.requestAppointment = async (req, res) => {
     });
   }
 };
+
+exports.getAppointmentsByDoctor = async (req, res) => {
+  try {
+    const { doctor_id } = req.params; // Ambil `doctor_id` dari token yang sudah di-verify
+
+    // Jika `doctor_id` tidak ditemukan, tampilkan pesan error
+    if (!doctor_id) {
+      return res.status(400).json({ message: "Doctor ID is missing or invalid" });
+    }
+
+    // Ambil janji temu yang sesuai dengan `doctor_id`
+    const appointments = await Consultations.findAll({
+      where: { dokter_id: doctor_id },
+      include: [
+        {
+          model: User, // Pasien yang membuat janji temu
+          as: 'pasien', 
+          attributes: ['name'], // Hanya ambil nama pasien
+        },
+      ],
+    });
+
+    // Jika tidak ada janji temu ditemukan
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found for this doctor" });
+    }
+
+    // Format respons sesuai permintaan
+    const formattedAppointments = appointments.map(appointment => ({
+      consultation_id: appointment.consultation_id,
+      complaint: appointment.complaint,
+      response: appointment.response,
+      status: appointment.status,
+      pasien: {
+        name: appointment.pasien.name, // Nama pasien
+      },
+    }));
+
+    res.status(200).json({
+      message: "Appointments retrieved successfully",
+      appointments: formattedAppointments,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+
+exports.getAllAppointments = async (req, res) => {
+  try {
+    // Ambil semua janji temu dari Consultations
+    const appointments = await Consultations.findAll({
+      include: [
+        {
+          model: User, // Pasien yang membuat janji temu
+          as: 'pasien', 
+          attributes: ['name'], // Hanya ambil nama pasien
+        },
+        {
+          model: User, // Dokter yang menangani janji temu
+          as: 'dokter',
+          attributes: ['name'], // Hanya ambil nama dokter
+        },
+      ],
+    });
+
+    // Jika tidak ada janji temu ditemukan
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found" });
+    }
+
+    // Format respons sesuai permintaan
+    const formattedAppointments = appointments.map(appointment => ({
+      consultation_id: appointment.consultation_id,
+      dokter: {
+        name: appointment.dokter.name, // Nama dokter
+      },
+      pasien: {
+        name: appointment.pasien.name, // Nama pasien
+      },
+      complaint: appointment.complaint, // Keluhan pasien
+      status: appointment.status, // Status janji temu
+    }));
+
+    res.status(200).json({
+      message: "Appointments retrieved successfully",
+      appointments: formattedAppointments,
+    });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
