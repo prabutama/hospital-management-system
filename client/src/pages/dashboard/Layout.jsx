@@ -16,11 +16,11 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-export function Layout({ children = [], showNavbar = false, showSidebar = false, userRole }) {
-    const role = userRole.toLowerCase()
+export function Layout({ children = [], showNavbar = false, showSidebar = false}) {
+    const user = JSON.parse(localStorage.getItem("user"));
     return (
         <SidebarProvider>
-            {showSidebar && <AppSidebar userRole={role} />}
+            {showSidebar && <AppSidebar user={user} />}
             <SidebarInset>
                 {showNavbar && (
                     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
@@ -30,7 +30,7 @@ export function Layout({ children = [], showNavbar = false, showSidebar = false,
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     <BreadcrumbItem className="hidden md:block">
-                                        <BreadcrumbLink href="#">
+                                        <BreadcrumbLink href="/">
                                             Home
                                         </BreadcrumbLink>
                                     </BreadcrumbItem>
@@ -40,7 +40,7 @@ export function Layout({ children = [], showNavbar = false, showSidebar = false,
                                     </BreadcrumbItem>
                                     <BreadcrumbSeparator className="hidden md:block" />
                                     <BreadcrumbItem>
-                                        <BreadcrumbPage>{ userRole }</BreadcrumbPage>
+                                        <BreadcrumbPage>{ user.role }</BreadcrumbPage>
                                     </BreadcrumbItem>
                                 </BreadcrumbList>
                             </Breadcrumb>
@@ -48,7 +48,7 @@ export function Layout({ children = [], showNavbar = false, showSidebar = false,
                     </header>
                 )}
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                    {showNavbar && <DashboardHeader role={role} />}
+                    {showNavbar && <DashboardHeader user={user} />}
                     {children}
                 </div>
             </SidebarInset>

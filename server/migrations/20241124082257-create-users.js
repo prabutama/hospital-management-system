@@ -23,9 +23,9 @@ module.exports = {
         allowNull: false,
       },
       role: {
-        type: Sequelize.ENUM("pasien", "dokter", "staff"),
+        type: Sequelize.ENUM("patient", "doctor", "staff"),
         allowNull: false,
-        defaultValue: "pasien",
+        defaultValue: "patient",
       },
       resetPasswordToken: {
         type: Sequelize.STRING(255),

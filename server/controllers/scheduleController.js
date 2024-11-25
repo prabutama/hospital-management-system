@@ -6,7 +6,7 @@ exports.createSchedule = async (req, res) => {
 
   try {
     const findDokter = await User.findOne({
-      where: { name: dokter_name, role: "dokter" },
+      where: { name: dokter_name, role: "doctor" },
     });
 
     if (!findDokter) {
@@ -64,7 +64,7 @@ exports.updateScheduleByStaff = async (req, res) => {
 
   try {
     const findDokter = await User.findOne({
-      where: { name: dokter_name, role: "dokter" },
+      where: { name: dokter_name, role: "doctor" },
     });
 
     if (!findDokter) {
@@ -132,7 +132,7 @@ exports.updateScheduleByPatient = async (req, res) => {
 
   try {
     const findPasien = await User.findOne({
-      where: { name: pasien_name, role: "pasien" },
+      where: { name: pasien_name, role: "patient" },
     });
 
     if (!findPasien) {

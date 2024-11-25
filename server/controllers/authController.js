@@ -46,12 +46,13 @@ exports.login = async (req, res) => {
         expiresIn: "1h",
       }
     );
-    res.json({ 
-      "token" : token,
-      "user" : {
+    res.json({
+      "token": token,
+      "user": {
         name: user.name, email: user.email, role: user.role
       }
-     });
+    });
+
   } catch (error) {
     res.status(500).json({ message: "Error logging in", Error: error.message });
   }
@@ -74,9 +75,6 @@ exports.forgotPassword = async (req, res) => {
     user.resetPasswordExpires = resetTokenExpires;
     await user.save();
 
-    console.log(
-      `Reset token for ${email}: http://localhost:3000/reset-password/${resetToken}`
-    );
     res
       .status(200)
       .json({ message: "Password reset link has been sent to your email." });
