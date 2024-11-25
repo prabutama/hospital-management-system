@@ -3,7 +3,7 @@ const router = express.Router();
 const checkRole = require("../middlewares/checkRole");
 const authenticateToken = require("../middlewares/authenticateToken");
 const {
-  createSchedule,
+  createDoctorAndSchedule ,
   getSchedules,
   deleteSchedule,
   updateScheduleByStaff,
@@ -11,11 +11,11 @@ const {
   updateScheduleByPatient,
 } = require("../controllers/scheduleController");
 
-router.post("/", authenticateToken, checkRole(["staff"]), createSchedule);
+router.post("/", authenticateToken, checkRole(["staff"]), createDoctorAndSchedule );
 router.get(
   "/",
-  authenticateToken,
-  checkRole(["dokter", "pasien", "staff"]),
+  authenticateToken, 
+  checkRole(["staff", "doctor", "patient"]),
   getSchedules
 );
 router.put(
