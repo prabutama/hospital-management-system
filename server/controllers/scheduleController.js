@@ -1,39 +1,50 @@
 const { ConsultationSchedule, User } = require("../models");
 const moment = require("moment-timezone");
+const bcrypt = require("bcrypt");
 
-exports.createSchedule = async (req, res) => {
-  const { dokter_name, start_time, end_time } = req.body;  
+exports.createDoctorAndSchedule = async (req, res) => {
+  const { doctor_name, email, password, start_time, end_time } = req.body;
 
   try {
-    const findDokter = await User.findOne({
-      where: { name: dokter_name, role: "doctor" },
+    // Hash password sebelum menyimpan akun
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Buat akun dokter
+    const doctor = await User.create({
+      name: doctor_name,
+      email,
+      password: hashedPassword,
+      role: "doctor",
     });
 
-    if (!findDokter) {
-      return res.status(404).json({ message: "Dokter not found." });
+    // Validasi input waktu
+    if (!start_time || !end_time) {
+      return res.status(400).json({ message: "Start time and end time are required." });
     }
 
-    const startTimeWIB = moment
-      .tz(start_time, "HH:mm", "Asia/Jakarta")
-      .format("HH:mm");
-    const endTimeWIB = moment
-      .tz(end_time, "HH:mm", "Asia/Jakarta")
-      .format("HH:mm");
+    if (!moment(start_time, "HH:mm:ss", true).isValid() || !moment(end_time, "HH:mm:ss", true).isValid()) {
+      return res.status(400).json({ message: "Invalid time format. Expected HH:mm:ss." });
+    }
 
+    // Konversi waktu ke format Asia/Jakarta
+    const startTimeWIB = moment.tz(start_time, "HH:mm:ss", "Asia/Jakarta").format("HH:mm:ss");
+    const endTimeWIB = moment.tz(end_time, "HH:mm:ss", "Asia/Jakarta").format("HH:mm:ss");
+
+    // Buat jadwal untuk dokter yang baru dibuat
     const schedule = await ConsultationSchedule.create({
-      dokter_id: findDokter.user_id,
+      dokter_id: doctor.user_id,
       start_time: startTimeWIB,
       end_time: endTimeWIB,
     });
 
+    // Berhasil
     res.status(201).json({
-      message: "Consultation Schedule creating successfully.",
+      message: "Doctor and consultation schedule created successfully.",
+      doctor,
       schedule,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error creating schedule", error: error.message });
+    res.status(500).json({ message: "Error creating doctor and schedule", error: error.message });
   }
 };
 
@@ -57,35 +68,39 @@ exports.getSchedules = async (req, res) => {
 
 
 
-// Update Schedule by Staff Function
 exports.updateScheduleByStaff = async (req, res) => {
   const { schedule_id } = req.params;
-  const { dokter_name, date, status, start_time, end_time } = req.body;
-
-  const validStatus = ["tersedia", "booked"];
-  if (!validStatus.includes(status)) {
-    return res.status(400).json({
-      message: "Invalid status. Allowed values are 'tersedia', 'booked'.",
-    });
-  }
+  const { doctor_name, start_time, end_time } = req.body;
 
   try {
-    const findDokter = await User.findOne({
-      where: { name: dokter_name, role: "doctor" },
-    });
+    // Validasi input
+    if (!start_time || !end_time) {
+      return res.status(400).json({ message: "Start time and end time are required." });
+    }
 
+    if (!moment(start_time, "HH:mm:ss", true).isValid() || !moment(end_time, "HH:mm:ss", true).isValid()) {
+      return res.status(400).json({ message: "Invalid time format. Expected HH:mm:ss." });
+    }
+
+    // Cari dokter
+    const findDokter = await User.findOne({
+      where: { name: doctor_name, role: "doctor" },
+    });
     if (!findDokter) {
       return res.status(404).json({ message: "Dokter not found." });
     }
 
-    const startTimeWIB = moment.tz(start_time, "Asia/Jakarta").format("HH:mm");
-    const endTimeWIB = moment.tz(end_time, "Asia/Jakarta").format("HH:mm");
+    // Konversi waktu ke Asia/Jakarta
+    const startTimeWIB = moment.tz(start_time, "HH:mm:ss", "Asia/Jakarta").format("HH:mm:ss");
+    const endTimeWIB = moment.tz(end_time, "HH:mm:ss", "Asia/Jakarta").format("HH:mm:ss");
 
+    // Cari jadwal
     const schedule = await ConsultationSchedule.findByPk(schedule_id);
     if (!schedule) {
       return res.status(404).json({ message: "Schedule not found" });
     }
 
+    // Update jadwal
     schedule.dokter_id = findDokter.user_id;
     schedule.start_time = startTimeWIB;
     schedule.end_time = endTimeWIB;
@@ -96,6 +111,7 @@ exports.updateScheduleByStaff = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
 
 exports.updateScheduleByDoctor = async (req, res) => {
   const { schedule_id } = req.params;
