@@ -21,9 +21,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       role: {
-        type: DataTypes.ENUM("pasien", "dokter", "staff"),
+        type: DataTypes.ENUM("patient", "doctor", "staff"),
         allowNull: false,
-        defaultValue: "pasien",
+        defaultValue: "patient",
       },
       resetPasswordToken: {
         type: DataTypes.STRING(255),

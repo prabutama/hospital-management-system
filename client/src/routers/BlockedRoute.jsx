@@ -4,9 +4,9 @@ import { useAuth } from '../context/AuthContext';
 const BlockedRoute = ({ children }) => {
     const { isAuthenticated, user } = useAuth();
     let route = ''
-    if (user?.role === "dokter")
+    if (user?.role === "doctor")
         route = "/doctor/dashboard"
-    if (user?.role === "pasien")
+    if (user?.role === "patient")
         route = "/patient/dashboard/doctors"
 
     return isAuthenticated ? <Navigate to={route} /> : children;

@@ -3,7 +3,7 @@ const { User } = require("../models");
 exports.getDoctor = async (req, res) => {
   try {
     // Query semua pengguna dengan role "dokter"
-    const doctors = await User.findAll({ where: { role: "dokter" } });
+    const doctors = await User.findAll({ where: { role: "doctor" } });
 
     // Formatkan hasil menjadi array objek yang berisi id dan name
     const doctorList = doctors.map(doctor => ({

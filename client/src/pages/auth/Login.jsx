@@ -17,42 +17,39 @@ export function Login() {
     const { login } = useAuth()
 
     const navigate = useNavigate();
-
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await axios.post("http://localhost:3000/login", { email, password });
+            const response = await axios.post("http://localhost:3000/api/login", { email, password });
 
-            // Validasi token dan user dari response
+            // Log untuk memeriksa struktur respons API
+            console.log("API Response:", response.data);
+
             if (!response.data.token || !response.data.user) {
                 throw new Error("Invalid response from server");
             }
 
             const { token, user } = response.data;
 
+            // Simpan token dan user
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
-
-            login(token, user);
 
             setAlert({
                 message: "Login successful! Redirecting to dashboard...",
                 variant: "success",
             });
 
-            // Redirect setelah 2 detik
             setTimeout(() => {
-                const role = user.role;
-                let route = ''
-                if (role === "pasien") {
-                    route = '/patient/dashboard/doctors'
-                } else if (role === "dokter")
-                    route = '/doctor/dashboard'
-                navigate(`${route}`);
+                const route = user.role === "patient"
+                    ? "/patient/dashboard/doctors"
+                    : "/doctor/dashboard";
+                window.location.href = route;
             }, 2000);
 
         } catch (error) {
+            console.error("Login Error:", error);
             setAlert({
                 message: error.response?.data?.message || "Login failed. Please check your credentials.",
                 variant: "error",
@@ -61,6 +58,7 @@ export function Login() {
             setLoading(false);
         }
     };
+
 
     return (
         <>
@@ -71,7 +69,6 @@ export function Login() {
                         <h2 className="text-3xl font-bold text-gray-900">Login</h2>
                         <p className="mt-2 text-gray-600">Welcome back to HospitalMS</p>
                     </div>
-                    {/* Alert Section */}
                     {alert.message && (
                         <Alert
                             className="mt-4"
