@@ -15,7 +15,7 @@ router.post("/", authenticateToken, checkRole(["staff"]), createSchedule);
 router.get(
   "/",
   authenticateToken,
-  checkRole(["dokter", "pasien", "staff"]),
+  checkRole(["doctor", "patient", "staff"]),
   getSchedules
 );
 router.put(
@@ -27,13 +27,13 @@ router.put(
 router.put(
   "/dokter/:schedule_id",
   authenticateToken,
-  checkRole(["dokter"]),
+  checkRole(["doctor"]),
   updateScheduleByDoctor
 );
 router.put(
   "/pasien/:schedule_id",
   authenticateToken,
-  checkRole(["pasien"]),
+  checkRole(["patient"]),
   updateScheduleByPatient
 );
 router.delete(
