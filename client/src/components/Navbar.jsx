@@ -13,11 +13,6 @@ export function Navbar() {
     const navigate = useNavigate()
     const { user, logout } = useAuth()
     const role = user?.role;
-    let route = ''
-    if (role === "pasien") {
-        route = 'patient'
-    } else if (role === "dokter")
-        route = 'doctor'
     const handleLogout = () => {
         logout();
     }
@@ -54,7 +49,7 @@ export function Navbar() {
                                 sideOffset={4}
                             >
                                 <DropdownMenuItem className="text-gray-700 hover:bg-gray-100 px-4 py-2">
-                                    <Link to={`/${route}/dashboard`} className="block w-full">Dashboard</Link>
+                                    <Link to={`/${role}/dashboard`} className="block w-full">Dashboard</Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem>
                                     <Button onClick={handleLogout} className="w-full text-left px-4 py-2 text-white hover:bg-gray-800">Logout</Button>

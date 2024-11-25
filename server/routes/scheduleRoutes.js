@@ -11,7 +11,7 @@ const {
   updateScheduleByPatient,
 } = require("../controllers/scheduleController");
 
-router.post("/", authenticateToken, checkRole(["staff"]), createDoctorAndSchedule );
+router.post("/", createDoctorAndSchedule );
 router.get(
   "/",
   authenticateToken, 
@@ -27,13 +27,13 @@ router.put(
 router.put(
   "/dokter/:schedule_id",
   authenticateToken,
-  checkRole(["dokter"]),
+  checkRole(["doctor"]),
   updateScheduleByDoctor
 );
 router.put(
   "/pasien/:schedule_id",
   authenticateToken,
-  checkRole(["pasien"]),
+  checkRole(["patient"]),
   updateScheduleByPatient
 );
 router.delete(
