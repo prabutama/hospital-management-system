@@ -277,7 +277,7 @@ exports.responseAppointments = async (req, res) => {
   const { consultation_id } = req.params;
   const { response, status } = req.body;
 
-  const validStatus = ["accepted, rejected"];
+  const validStatus = ["accepted", "rejected"];
   if (!validStatus.includes(status)) {
     return res.status(400).json({
       message: "Invalid status. Allowed value are 'accepted' or 'rejected'",
@@ -285,16 +285,17 @@ exports.responseAppointments = async (req, res) => {
   }
 
   try {
-    const appointment = Consultations.findOne({
-      where: { consultation_id: consultation_id },
-    });
+    const appointment = await Consultations.findOne({ where: { consultation_id: consultation_id } });
     if (!appointment) {
       return res.status(404).json({ message: "No appointment found" });
     }
 
     appointment.response = response;
     appointment.status = status;
-    appointment.save();
+    await appointment.save();
+
+
+
     res.json({ message: "Appointment update successfully" });
   } catch (error) {
     res

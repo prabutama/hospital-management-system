@@ -19,7 +19,6 @@ export default function DoctorList() {
     const { user } = useAuth();
 
     useEffect(() => {
-
         const fetchDoctors = async () => {
             const token = localStorage.getItem("token");
             try {
@@ -29,11 +28,28 @@ export default function DoctorList() {
                     },
                 });
 
-                const sortedDoctors = response.data.sort((a, b) => {
+                // Get current time in hours and minutes
+                const now = new Date();
+                const currentTime = now.getHours() * 60 + now.getMinutes(); // Convert current time to minutes since midnight
+
+                // Filter doctors based on current time
+                const filteredDoctors = response.data.filter((doctor) => {
+                    const [startHours, startMinutes] = doctor.start_time.split(":").map(Number);
+                    const [endHours, endMinutes] = doctor.end_time.split(":").map(Number);
+                    const startTime = startHours * 60 + startMinutes;
+                    const endTime = endHours * 60 + endMinutes;
+
+                    // Show doctors whose schedule is within the current time
+                    return currentTime >= startTime && currentTime <= endTime;
+                });
+
+                // Sort doctors by start time
+                const sortedDoctors = filteredDoctors.sort((a, b) => {
                     const timeA = a.start_time.split(":").join(""); // Remove ":" to create comparable strings
                     const timeB = b.start_time.split(":").join("");
                     return timeA.localeCompare(timeB);
                 });
+
                 setDoctors(sortedDoctors);
                 setLoading(false);
             } catch (err) {
@@ -65,7 +81,6 @@ export default function DoctorList() {
 
         if (formAction === "consult") {
             try {
-
                 const response = await axios.post(
                     "http://localhost:3000/api/consultation",
                     {
@@ -81,15 +96,22 @@ export default function DoctorList() {
                     }
                 );
 
-                console.log("Response data:", response.data);
+                // Tutup form
+                setSelectedDoctor(null);
 
+                // Tampilkan alert
                 setAlertMessage(
                     `Konsultasi dengan dokter ${selectedDoctor.dokter_id} diajukan dengan keluhan: ${consultationRequest}`
                 );
                 setAlertType("success");
-                window.location.reload();
+
+                // Refresh halaman
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } catch (error) {
-                console.error("Error submitting consultation request:", error.response?.data || error.message);
+                // Tutup form sebelum menampilkan error
+                setSelectedDoctor(null);
 
                 setAlertMessage(
                     error.response?.data?.message || "Error submitting consultation request. Please try again later."
@@ -117,10 +139,22 @@ export default function DoctorList() {
                         },
                     }
                 );
+
+                // Tutup form
+                setSelectedDoctor(null);
+
+                // Tampilkan alert
                 setAlertMessage(`Jadwal dokter ${selectedDoctor.Doctor?.name} berhasil diperbarui.`);
                 setAlertType("success");
-                window.location.reload();
+
+                // Refresh halaman
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
             } catch (error) {
+                // Tutup form sebelum menampilkan error
+                setSelectedDoctor(null);
+
                 setAlertMessage("Error updating schedule. Please try again later.");
                 setAlertType("error");
             }
@@ -149,7 +183,7 @@ export default function DoctorList() {
             )}
 
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-                {
+                {doctors.length > 0 ? (
                     doctors.map((doctor) => (
                         <Card key={doctor.dokter_id} className="shadow-lg rounded-lg border border-gray-200">
                             <CardHeader className="bg-gray-100 p-4 rounded-t-lg">
@@ -180,7 +214,10 @@ export default function DoctorList() {
                                 ) : null}
                             </CardFooter>
                         </Card>
-                    ))}
+                    ))
+                ) : (
+                    <p className="text-center text-gray-500">Tidak ada dokter yang tersedia pada waktu ini.</p>
+                )}
             </div>
 
             {/* Dialog for form */}
@@ -224,18 +261,21 @@ export default function DoctorList() {
                         ) : (
                             <div>
                                 <textarea
-                                    className="mt-2 w-full p-2 border border-gray-300 rounded"
-                                    rows="4"
+                                    className="border p-2 w-full"
                                     value={consultationRequest}
                                     onChange={(e) => setConsultationRequest(e.target.value)}
-                                    placeholder="Tuliskan keluhan atau pertanyaan Anda..."
+                                    placeholder="Tuliskan keluhan Anda"
+                                    rows={4}
                                 />
                             </div>
                         )}
-
                         <DialogFooter>
-                            <Button className="mt-4" onClick={handleSubmit}>
-                                {formAction === "edit" ? "Perbarui Jadwal" : "Ajukan Konsultasi"}
+                            <Button
+                                className="w-full"
+                                onClick={handleSubmit}
+                                disabled={loading}
+                            >
+                                {loading ? "Processing..." : formAction === "edit" ? "Update Jadwal" : "Ajukan Konsultasi"}
                             </Button>
                         </DialogFooter>
                     </DialogContent>

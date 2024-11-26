@@ -31,7 +31,6 @@ export function Login() {
 
             const { token, user } = response.data;
 
-            // Simpan token dan user
             localStorage.setItem("token", token);
             localStorage.setItem("user", JSON.stringify(user));
 
@@ -44,7 +43,7 @@ export function Login() {
                 const route = user.role === "patient"
                     ? "/patient/dashboard/doctors" :
                     user.role === "doctor" ? "/doctor/dashboard/consultations" :
-                    user.role === "staff" ? "/staff/dashboard/consultations" : "/";
+                    user.role === "staff" ? "/staff/dashboard/doctors" : "/";
 
                 window.location.href = route;
             }, 2000);

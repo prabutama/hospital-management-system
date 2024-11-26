@@ -32,7 +32,7 @@ router.get(
   getAllAppointments
 );
 router.put(
-  "/doctor/:appointment_id",
+  "/doctor/:consultation_id",
   authenticateToken,
   checkRole(["doctor"]),
   responseAppointments
