@@ -43,8 +43,10 @@ export function Login() {
 
             setTimeout(() => {
                 const route = user.role === "patient"
-                    ? "/patient/dashboard/doctors"
-                    : "/doctor/dashboard";
+                    ? "/patient/dashboard/doctors" :
+                    user.role === "doctor" ? "/doctor/dashboard/consultations" :
+                    user.role === "staff" ? "/staff/dashboard" : "/";
+
                 window.location.href = route;
             }, 2000);
 

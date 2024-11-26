@@ -87,6 +87,7 @@ export default function DoctorList() {
                     `Konsultasi dengan dokter ${selectedDoctor.dokter_id} diajukan dengan keluhan: ${consultationRequest}`
                 );
                 setAlertType("success");
+                window.location.reload();
             } catch (error) {
                 console.error("Error submitting consultation request:", error.response?.data || error.message);
 
