@@ -61,7 +61,9 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     // Hapus ENUM terlebih dahulu untuk menghindari masalah
-    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_consultations_status";');
+    await queryInterface.sequelize.query(
+      'DROP TYPE IF EXISTS "enum_consultations_status";'
+    );
 
     // Hapus tabel consultations
     await queryInterface.dropTable("consultations");

@@ -1,5 +1,7 @@
 const { Consultations, User, ConsultationSchedule } = require("../models");
-const { format } = require('date-fns');
+const { format } = require("date-fns");
+const consultations = require("../models/consultations");
+const { where } = require("sequelize");
 
 exports.requestAppointment = async (req, res) => {
   const { doctor_id, patient_id, complaint, schedule_id } = req.body;
@@ -37,7 +39,8 @@ exports.requestAppointment = async (req, res) => {
 
     if (currentTime < startTime || currentTime > endTime) {
       return res.status(400).json({
-        message: "The consultation time is not valid. Please select a valid time.",
+        message:
+          "The consultation time is not valid. Please select a valid time.",
       });
     }
 
@@ -45,14 +48,17 @@ exports.requestAppointment = async (req, res) => {
     const consultation = await Consultations.create({
       dokter_id: doctor_id,
       pasien_id: patient_id,
-      complaint,
-      schedule_id, // Menyimpan schedule_id ke dalam konsultasi
+      complaint: complaint,
+      schedule_id: schedule_id, // Menyimpan schedule_id ke dalam konsultasi
       status: "pending",
       consultation_date: new Date(), // Menyimpan tanggal saat ini
     });
 
     // Format tanggal untuk respons
-    const formattedDate = format(new Date(consultation.consultation_date), "dd MMMM yyyy, hh:mm a");
+    const formattedDate = format(
+      new Date(consultation.consultation_date),
+      "dd MMMM yyyy, hh:mm a"
+    );
 
     res.status(201).json({
       message: "Consultation request created successfully",
@@ -70,14 +76,15 @@ exports.requestAppointment = async (req, res) => {
   }
 };
 
-
 exports.getAppointmentsByDoctor = async (req, res) => {
   try {
     const { doctor_id } = req.params; // Ambil `doctor_id` dari token yang sudah di-verify
 
     // Jika `doctor_id` tidak ditemukan, tampilkan pesan error
     if (!doctor_id) {
-      return res.status(400).json({ message: "Doctor ID is missing or invalid" });
+      return res
+        .status(400)
+        .json({ message: "Doctor ID is missing or invalid" });
     }
 
     // Ambil janji temu yang sesuai dengan `doctor_id`
@@ -86,24 +93,29 @@ exports.getAppointmentsByDoctor = async (req, res) => {
       include: [
         {
           model: User, // Pasien yang membuat janji temu
-          as: 'pasien', 
-          attributes: ['name'], // Hanya ambil nama pasien
+          as: "pasien",
+          attributes: ["name"], // Hanya ambil nama pasien
         },
       ],
     });
 
     // Jika tidak ada janji temu ditemukan
     if (!appointments || appointments.length === 0) {
-      return res.status(404).json({ message: "No appointments found for this doctor" });
+      return res
+        .status(404)
+        .json({ message: "No appointments found for this doctor" });
     }
 
     // Format respons sesuai permintaan
-    const formattedAppointments = appointments.map(appointment => ({
+    const formattedAppointments = appointments.map((appointment) => ({
       consultation_id: appointment.consultation_id,
       complaint: appointment.complaint,
       response: appointment.response,
       status: appointment.status,
-      date: format(new Date(appointment.consultation_date), "dd MMMM yyyy, hh:mm a"),
+      date: format(
+        new Date(appointment.consultation_date),
+        "dd MMMM yyyy, hh:mm a"
+      ),
       pasien: {
         name: appointment.pasien.name, // Nama pasien
       },
@@ -127,7 +139,9 @@ exports.getAppointmentsByPatient = async (req, res) => {
 
     // Validasi `patient_id`
     if (!patient_id) {
-      return res.status(400).json({ message: "Patient ID is missing or invalid" });
+      return res
+        .status(400)
+        .json({ message: "Patient ID is missing or invalid" });
     }
 
     // Ambil janji temu yang sesuai dengan `patient_id`
@@ -136,26 +150,29 @@ exports.getAppointmentsByPatient = async (req, res) => {
       include: [
         {
           model: User, // Asosiasikan dengan model User
-          as: 'dokter', // Pastikan alias sesuai dengan definisi asosiasi
-          attributes: ['name'], // Ambil hanya atribut `name`
+          as: "dokter", // Pastikan alias sesuai dengan definisi asosiasi
+          attributes: ["name"], // Ambil hanya atribut `name`
         },
       ],
     });
 
     // Jika tidak ada janji temu ditemukan
     if (!appointments || appointments.length === 0) {
-      return res.status(404).json({ message: "No appointments found for this patient" });
+      return res
+        .status(404)
+        .json({ message: "No appointments found for this patient" });
     }
 
-
     // Format respons sesuai permintaan
-    const formattedAppointments = appointments.map(appointment => ({
-      
+    const formattedAppointments = appointments.map((appointment) => ({
       consultation_id: appointment.id, // Pastikan atribut ini benar
       complaint: appointment.complaint,
       response: appointment.response,
       status: appointment.status,
-      date: format(new Date(appointment.consultation_date), "dd MMMM yyyy, hh:mm a"),
+      date: format(
+        new Date(appointment.consultation_date),
+        "dd MMMM yyyy, hh:mm a"
+      ),
       doctor: {
         name: appointment.dokter?.name || "Unknown", // Tangani jika `doctor` tidak ditemukan
       },
@@ -175,8 +192,6 @@ exports.getAppointmentsByPatient = async (req, res) => {
   }
 };
 
-
-
 exports.getAllAppointments = async (req, res) => {
   try {
     // Ambil semua janji temu dari Consultations
@@ -184,13 +199,13 @@ exports.getAllAppointments = async (req, res) => {
       include: [
         {
           model: User, // Pasien yang membuat janji temu
-          as: 'pasien', 
-          attributes: ['name'], // Hanya ambil nama pasien
+          as: "pasien",
+          attributes: ["name"], // Hanya ambil nama pasien
         },
         {
           model: User, // Dokter yang menangani janji temu
-          as: 'dokter',
-          attributes: ['name'], // Hanya ambil nama dokter
+          as: "dokter",
+          attributes: ["name"], // Hanya ambil nama dokter
         },
       ],
     });
@@ -201,7 +216,7 @@ exports.getAllAppointments = async (req, res) => {
     }
 
     // Format respons sesuai permintaan
-    const formattedAppointments = appointments.map(appointment => ({
+    const formattedAppointments = appointments.map((appointment) => ({
       consultation_id: appointment.consultation_id,
       dokter: {
         name: appointment.dokter.name, // Nama dokter
@@ -210,7 +225,10 @@ exports.getAllAppointments = async (req, res) => {
         name: appointment.pasien.name, // Nama pasien
       },
       complaint: appointment.complaint, // Keluhan pasien
-      date: format(new Date(appointment.consultation_date), "dd MMMM yyyy, hh:mm a"),
+      date: format(
+        new Date(appointment.consultation_date),
+        "dd MMMM yyyy, hh:mm a"
+      ),
       status: appointment.status, // Status janji temu
     }));
 
@@ -227,3 +245,80 @@ exports.getAllAppointments = async (req, res) => {
   }
 };
 
+exports.updateRequestAppointment = async (req, res) => {
+  const { consultation_id } = req.params;
+  const { complaint, status } = req.body;
+
+  try {
+    const appointment = Consultations.findOne({
+      where: { consultation_id: consultation_id },
+    });
+    if (!appointment) {
+      return res.status(404).json({ message: "No appointment found" });
+    }
+
+    const statusCanceled = "canceled";
+    if (statusCanceled.includes(status)) {
+      appointment.destroy();
+      return res.json({ message: "Appointment has been canceled" });
+    }
+
+    appointment.complaint = complaint;
+    appointment.save();
+    res.json({ message: "Appointment updated successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.responseAppointments = async (req, res) => {
+  const { consultation_id } = req.params;
+  const { response, status } = req.body;
+
+  const validStatus = ["accepted, rejected"];
+  if (!validStatus.includes(status)) {
+    return res.status(400).json({
+      message: "Invalid status. Allowed value are 'accepted' or 'rejected'",
+    });
+  }
+
+  try {
+    const appointment = Consultations.findOne({
+      where: { consultation_id: consultation_id },
+    });
+    if (!appointment) {
+      return res.status(404).json({ message: "No appointment found" });
+    }
+
+    appointment.response = response;
+    appointment.status = status;
+    appointment.save();
+    res.json({ message: "Appointment update successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.deleteAppointments = async (req, res) => {
+  const { consultation_id } = req.params;
+
+  try {
+    const appointment = Consultations.findOne({
+      where: { consultation_id: consultation_id },
+    });
+    if (!appointment) {
+      return res.status(404).status({ message: "No appointment found" });
+    }
+
+    appointment.destroy();
+    res.json({ message: "Appointment deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
