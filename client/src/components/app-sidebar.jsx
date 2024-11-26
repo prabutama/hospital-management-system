@@ -116,11 +116,6 @@ export function AppSidebar({
         icon: SquareActivity,
         items: [
           {
-            title: "Pengajuan Pemeriksaan",
-            url: "#",
-            icon: ClipboardList,
-          },
-          {
             title: "List Dokter",
             url: "/staff/dashboard/doctors",
             icon: LayoutList,

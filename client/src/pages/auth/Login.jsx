@@ -23,7 +23,6 @@ export function Login() {
         try {
             const response = await axios.post("http://localhost:3000/api/login", { email, password });
 
-            // Log untuk memeriksa struktur respons API
             console.log("API Response:", response.data);
 
             if (!response.data.token || !response.data.user) {
@@ -45,7 +44,7 @@ export function Login() {
                 const route = user.role === "patient"
                     ? "/patient/dashboard/doctors" :
                     user.role === "doctor" ? "/doctor/dashboard/consultations" :
-                    user.role === "staff" ? "/staff/dashboard" : "/";
+                    user.role === "staff" ? "/staff/dashboard/consultations" : "/";
 
                 window.location.href = route;
             }, 2000);

@@ -84,18 +84,18 @@ const Consultations = () => {
     };
 
     if (isLoading) {
-        return <div>Loading data...</div>;
+        return <div className="text-center py-4">Loading data...</div>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div className="text-center text-red-500 py-4">Error: {error}</div>;
     }
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.map((row) => (
-                <Card key={row.id} className="shadow-md border border-gray-300">
-                    <CardHeader>
+                <Card key={row.id} className="shadow-lg rounded-lg border border-gray-300 bg-white">
+                    <CardHeader className="p-4">
                         {
                             user.role === "doctor" ? (
                                 <p className="text-lg font-semibold">Nama Pasien: {row.namaPasien}</p>
@@ -110,7 +110,7 @@ const Consultations = () => {
                         }
                         <p className="text-sm text-gray-500">{row.tanggalPengajuan}</p>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-4">
                         <p>
                             <strong>Keluhan:</strong> {row.keluhan}
                         </p>
@@ -118,10 +118,10 @@ const Consultations = () => {
                             <strong>Diagnosa:</strong> {row.penyakit}
                         </p>
                         <p>
-                            <strong>Status:</strong> {row.status}
+                            <strong>Status:</strong> <span className={`font-semibold ${row.status === 'pending' ? 'text-yellow-600' : row.status === 'resolved' ? 'text-green-600' : 'text-red-600'}`}>{row.status}</span>
                         </p>
                     </CardContent>
-                    <CardFooter className="flex justify-end">
+                    <CardFooter className="flex justify-end p-4">
                         {user.role === "doctor" && (
                             <Button
                                 variant="default"
@@ -158,7 +158,7 @@ const Consultations = () => {
                                     rows={4}
                                 />
                             </div>
-                            <div className="flex justify-end">
+                            <div className="flex justify-end gap-4">
                                 <Button
                                     variant="ghost"
                                     className="mr-2"

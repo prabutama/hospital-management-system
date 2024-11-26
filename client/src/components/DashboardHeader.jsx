@@ -13,7 +13,7 @@ export default function DashboardHeader({ user }) {
                 )}
                 {user.role === "doctor" && (
                     <>
-                        <h1 className="text-2xl tracking-wider font-bold">Halo Dr. {user.name},</h1>
+                        <h1 className="text-2xl tracking-wider font-bold">Halo dr. {user.name},</h1>
                         <h1 className="text-2xl tracking-wider font-semibold">Terima kasih atas dedikasi Anda dalam merawat pasien!</h1>
                     </>
                 )}
