@@ -13,6 +13,7 @@ import PrivateRoute from "./PrivateRoute";
 import BlockedRoute from "./BlockedRoute";
 import { Staff } from "@/pages/dashboard/Staff";
 import AddDoctor from "@/pages/dashboard/AddDoctor";
+import Consultations from "@/pages/dashboard/Consultations";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -36,6 +37,14 @@ const router = createBrowserRouter([
                 </Layout>
             </PrivateRoute>
         ),
+        children: [
+            {
+                path: "consultations",
+                element: (
+                    <Consultations />
+                ),
+            },
+        ],
     },
     {
         path: "/patient/dashboard",
