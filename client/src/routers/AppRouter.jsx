@@ -68,6 +68,12 @@ const router = createBrowserRouter([
                     <DoctorList />
                 ),
             },
+            {
+                path: "consultations",
+                element: (
+                    <Consultations />
+                ),
+            }
         ],
     },
     {
@@ -98,6 +104,12 @@ const router = createBrowserRouter([
                     <AddDoctor />
                 ),
             },
+            {
+                path: "consultations",
+                element: (
+                    <Consultations />
+                ),
+            }
         ],
     },
 ]);

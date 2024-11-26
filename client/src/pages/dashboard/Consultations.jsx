@@ -1,20 +1,13 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { useAuth } from '@/context/AuthContext';
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
 
-const columns = [
-    { Header: "Tanggal Pengajuan", accessor: "tanggalPengajuan" },
-    { Header: "Nama Pasien", accessor: "namaPasien" },
-    { Header: "Keluhan", accessor: "keluhan" },
-    { Header: "Penyakit", accessor: "penyakit" },
-];
-
-export default function Consultations() {
+const Consultations = () => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [selectedKeluhan, setSelectedKeluhan] = useState("");
     const [selectedPatient, setSelectedPatient] = useState("");
@@ -24,40 +17,43 @@ export default function Consultations() {
     const fetchData = async () => {
         try {
             setIsLoading(true);
+            const token = localStorage.getItem("token");
 
-            const doctorId = user?.id;
-            const token = localStorage.getItem('token');
-
-            if (!doctorId || !token) {
-                throw new Error('Doctor ID or token is missing');
+            if (!user?.id || !user?.role || !token) {
+                throw new Error("User ID, role, or token is missing");
             }
 
-            const response = await axios.get(
-                `http://localhost:3000/api/consultation/list-appointment/${doctorId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
+            // Tentukan endpoint berdasarkan role user
+            const endpoint =
+                user.role === "doctor"
+                    ? `http://localhost:3000/api/consultation/list-appointment/${user.id}`
+                    : user.role === "patient"
+                        ? `http://localhost:3000/api/consultation/list-appointment/patient/${user.id}`
+                        : user.role === "staff"
+                            ? `http://localhost:3000/api/consultation/list-appointment/`
+                            : "";
 
-            console.log('Response Data:', response.data.appointments);
-            if (!Array.isArray(response.data.appointments)) {
-                console.error('API returned unexpected format:', response.data);
-                throw new Error('Unexpected response format');
-            }
+            const response = await axios.get(endpoint, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            console.log("API Response:", response.data);
 
             const mappedData = response.data.appointments.map((item) => ({
                 id: item.consultation_id,
-                tanggalPengajuan: "Tanggal dummy", // Ganti sesuai data API jika tersedia
-                namaPasien: item.pasien.name,
+                tanggalPengajuan: item.date,
+                namaPasien: user.role === "doctor" || user.role === "staff" ? item.pasien.name : "Anda",
+                namaDokter: user.role === "patient" ? item.doctor.name : user.role === "staff" ? item.dokter.name : null,
                 keluhan: item.complaint,
+                status: item.status,
                 penyakit: item.response || "Belum ada diagnosa",
             }));
 
             setData(mappedData);
         } catch (error) {
-            console.error('Fetch Error:', error);
+            console.error("Fetch Error:", error);
             setError(error.response?.data?.message || error.message);
         } finally {
             setIsLoading(false);
@@ -96,74 +92,47 @@ export default function Consultations() {
     }
 
     return (
-        <div className="flex flex-col gap-4">
-            <div className="shadow-md rounded-xl overflow-hidden border border-gray-300">
-                <table className="table-auto w-full" style={{ tableLayout: "fixed" }}>
-                    <thead className="bg-gray-100">
-                        <tr>
-                            {columns.map((column) => (
-                                <th
-                                    key={column.accessor}
-                                    className="px-6 py-4 text-left border border-gray-200"
-                                >
-                                    {column.Header}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((row) => (
-                            <tr key={row.id} className="hover:bg-gray-50">
-                                <td colSpan={columns.length}>
-                                    <Accordion type="single" collapsible>
-                                        <AccordionItem value={String(row.id)}>
-                                            <AccordionTrigger
-                                                className="px-6 py-4 flex justify-between items-center w-full focus:outline-none"
-                                                style={{ border: "none" }}
-                                            >
-                                                {columns.map((column) => (
-                                                    <span
-                                                        key={`${row.id}-${column.accessor}`}
-                                                        className={`text-left w-full`}
-                                                        style={{
-                                                            borderBottom: "none",
-                                                            padding: "0.5rem 1rem",
-                                                        }}
-                                                    >
-                                                        {column.accessor === "penyakit" ? (
-                                                            <button
-                                                                className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    openDialog(row.keluhan, row.namaPasien);
-                                                                }}
-                                                            >
-                                                                Input Hasil Diagnosa
-                                                            </button>
-                                                        ) : (
-                                                            row[column.accessor]
-                                                        )}
-                                                    </span>
-                                                ))}
-                                            </AccordionTrigger>
-                                            <AccordionContent>
-                                                <div className="px-6 py-4 text-gray-700 flex">
-                                                    <div className="w-1/2 pr-4">
-                                                        <strong>Keluhan:</strong> {row.keluhan}
-                                                    </div>
-                                                    <div className="border-l border-gray-300 pl-4 w-1/2">
-                                                        <strong>Diagnosa:</strong> {row.penyakit}
-                                                    </div>
-                                                </div>
-                                            </AccordionContent>
-                                        </AccordionItem>
-                                    </Accordion>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.map((row) => (
+                <Card key={row.id} className="shadow-md border border-gray-300">
+                    <CardHeader>
+                        {
+                            user.role === "doctor" ? (
+                                <p className="text-lg font-semibold">Nama Pasien: {row.namaPasien}</p>
+                            ) : user.role === "patient" ? (
+                                <p className="text-lg font-semibold">Nama Dokter: dr. {row.namaDokter}</p>
+                            ) : user.role === "staff" ? (
+                                <>
+                                    <p className="text-lg font-semibold">Nama Dokter: dr. {row.namaDokter}</p>
+                                    <p className="text-lg font-semibold">Nama Pasien: {row.namaPasien}</p>
+                                </>
+                            ) : null
+                        }
+                        <p className="text-sm text-gray-500">{row.tanggalPengajuan}</p>
+                    </CardHeader>
+                    <CardContent>
+                        <p>
+                            <strong>Keluhan:</strong> {row.keluhan}
+                        </p>
+                        <p>
+                            <strong>Diagnosa:</strong> {row.penyakit}
+                        </p>
+                        <p>
+                            <strong>Status:</strong> {row.status}
+                        </p>
+                    </CardContent>
+                    <CardFooter className="flex justify-end">
+                        {user.role === "doctor" && (
+                            <Button
+                                variant="default"
+                                onClick={() => openDialog(row.keluhan, row.namaPasien)}
+                            >
+                                Input Diagnosa
+                            </Button>
+                        )}
+                    </CardFooter>
+                </Card>
+            ))}
 
             {/* Dialog */}
             {isDialogOpen && (
@@ -190,19 +159,16 @@ export default function Consultations() {
                                 />
                             </div>
                             <div className="flex justify-end">
-                                <button
-                                    type="button"
-                                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg mr-2"
+                                <Button
+                                    variant="ghost"
+                                    className="mr-2"
                                     onClick={closeDialog}
                                 >
                                     Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-                                >
+                                </Button>
+                                <Button variant="default" type="submit">
                                     Submit
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>
@@ -210,4 +176,6 @@ export default function Consultations() {
             )}
         </div>
     );
-}
+};
+
+export default Consultations;

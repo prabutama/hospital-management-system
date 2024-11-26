@@ -58,6 +58,11 @@ export function AppSidebar({
             url: "/patient/dashboard/doctors",
             icon: Users,
           },
+          {
+            title: "Pengajuan Pemeriksaan",
+            url: "/patient/dashboard/consultations",
+            icon: ClipboardList,
+          },
         ],
       },
     ],
@@ -81,7 +86,7 @@ export function AppSidebar({
         items: [
           {
             title: "Pengajuan Pemeriksaan",
-            url: "#",
+            url: "/doctor/dashboard/consultations",
             icon: ClipboardList,
           },
           {
@@ -124,7 +129,12 @@ export function AppSidebar({
             title: "Tambahkan Dokter",
             url: "/staff/dashboard/add-doctor",
             icon: UserRoundPlus,
-          }
+          },
+          {
+            title: "Pengajuan Pemeriksaan",
+            url: "/staff/dashboard/consultations",
+            icon: ClipboardList,
+          },
         ],
       },
     ],
@@ -136,7 +146,7 @@ export function AppSidebar({
         <NavUser user={data.user} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={user?.role === "dokter" ? data.navDoctor : user?.role === "staff" ? data.navStaff : data.navPatient} />
+        <NavMain items={user?.role === "doctor" ? data.navDoctor : user?.role === "staff" ? data.navStaff : data.navPatient} />
       </SidebarContent>
       <SidebarRail />
     </Sidebar>)
