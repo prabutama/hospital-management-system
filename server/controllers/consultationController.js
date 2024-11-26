@@ -1,4 +1,5 @@
 const { Consultations, User, ConsultationSchedule } = require("../models");
+const { format } = require('date-fns');
 
 exports.requestAppointment = async (req, res) => {
   const { doctor_id, patient_id, complaint, schedule_id } = req.body;
@@ -40,18 +41,25 @@ exports.requestAppointment = async (req, res) => {
       });
     }
 
-    // Buat konsultasi
+    // Buat konsultasi dengan `consultation_date` diatur ke tanggal saat ini
     const consultation = await Consultations.create({
       dokter_id: doctor_id,
       pasien_id: patient_id,
       complaint,
-      schedule_id,  // Menyimpan schedule_id ke dalam konsultasi
+      schedule_id, // Menyimpan schedule_id ke dalam konsultasi
       status: "pending",
+      consultation_date: new Date(), // Menyimpan tanggal saat ini
     });
+
+    // Format tanggal untuk respons
+    const formattedDate = format(new Date(consultation.consultation_date), "dd MMMM yyyy, hh:mm a");
 
     res.status(201).json({
       message: "Consultation request created successfully",
-      consultation,
+      consultation: {
+        ...consultation.toJSON(), // Konversi instance Sequelize ke JSON
+        consultation_date: formattedDate, // Ganti format tanggal dengan format yang bagus
+      },
     });
   } catch (error) {
     console.error(error.message);
@@ -61,6 +69,7 @@ exports.requestAppointment = async (req, res) => {
     });
   }
 };
+
 
 exports.getAppointmentsByDoctor = async (req, res) => {
   try {
@@ -94,6 +103,7 @@ exports.getAppointmentsByDoctor = async (req, res) => {
       complaint: appointment.complaint,
       response: appointment.response,
       status: appointment.status,
+      date: format(new Date(appointment.consultation_date), "dd MMMM yyyy, hh:mm a"),
       pasien: {
         name: appointment.pasien.name, // Nama pasien
       },
@@ -111,6 +121,60 @@ exports.getAppointmentsByDoctor = async (req, res) => {
     });
   }
 };
+exports.getAppointmentsByPatient = async (req, res) => {
+  try {
+    const { patient_id } = req.params; // Ambil `patient_id` dari parameter request
+
+    // Validasi `patient_id`
+    if (!patient_id) {
+      return res.status(400).json({ message: "Patient ID is missing or invalid" });
+    }
+
+    // Ambil janji temu yang sesuai dengan `patient_id`
+    const appointments = await Consultations.findAll({
+      where: { pasien_id: patient_id },
+      include: [
+        {
+          model: User, // Asosiasikan dengan model User
+          as: 'dokter', // Pastikan alias sesuai dengan definisi asosiasi
+          attributes: ['name'], // Ambil hanya atribut `name`
+        },
+      ],
+    });
+
+    // Jika tidak ada janji temu ditemukan
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found for this patient" });
+    }
+
+
+    // Format respons sesuai permintaan
+    const formattedAppointments = appointments.map(appointment => ({
+      
+      consultation_id: appointment.id, // Pastikan atribut ini benar
+      complaint: appointment.complaint,
+      response: appointment.response,
+      status: appointment.status,
+      date: format(new Date(appointment.consultation_date), "dd MMMM yyyy, hh:mm a"),
+      doctor: {
+        name: appointment.dokter?.name || "Unknown", // Tangani jika `doctor` tidak ditemukan
+      },
+    }));
+
+    // Kirimkan respons sukses
+    res.status(200).json({
+      message: "Appointments retrieved successfully",
+      appointments: formattedAppointments,
+    });
+  } catch (error) {
+    console.error("Error retrieving appointments:", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
 
 
 exports.getAllAppointments = async (req, res) => {
@@ -146,6 +210,7 @@ exports.getAllAppointments = async (req, res) => {
         name: appointment.pasien.name, // Nama pasien
       },
       complaint: appointment.complaint, // Keluhan pasien
+      date: format(new Date(appointment.consultation_date), "dd MMMM yyyy, hh:mm a"),
       status: appointment.status, // Status janji temu
     }));
 

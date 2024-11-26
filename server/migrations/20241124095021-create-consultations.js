@@ -52,6 +52,10 @@ module.exports = {
         allowNull: false,
         defaultValue: "pending",
       },
+      consultation_date: {
+        type: Sequelize.DATE,
+        allowNull: false, // Tanggal konsultasi harus diisi
+      },
     });
   },
 

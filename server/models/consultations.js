@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: "pending",
       },
+      consultation_date: {
+        type: DataTypes.DATE,
+        allowNull: false, // Tanggal konsultasi harus diisi
+      },
     },
     {
       tableName: "consultations",
