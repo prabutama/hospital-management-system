@@ -229,7 +229,8 @@ exports.getAllAppointments = async (req, res) => {
         new Date(appointment.consultation_date),
         "dd MMMM yyyy, hh:mm a"
       ),
-      status: appointment.status, // Status janji temu
+      status: appointment.status,
+      response: appointment.response, 
     }));
 
     res.status(200).json({
