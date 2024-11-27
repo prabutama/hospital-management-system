@@ -1,7 +1,8 @@
-const { Consultations, User, ConsultationSchedule } = require("../models");
+const { Consultations, User, ConsultationSchedule, sequelize } = require("../models");
+const { Op } = require("sequelize");
 const { format } = require("date-fns");
-const consultations = require("../models/consultations");
 const { where } = require("sequelize");
+
 
 exports.requestAppointment = async (req, res) => {
   const { doctor_id, patient_id, complaint, schedule_id } = req.body;
@@ -230,7 +231,7 @@ exports.getAllAppointments = async (req, res) => {
         "dd MMMM yyyy, hh:mm a"
       ),
       status: appointment.status,
-      response: appointment.response, 
+      response: appointment.response,
     }));
 
     res.status(200).json({
@@ -324,3 +325,48 @@ exports.deleteAppointments = async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 };
+
+exports.getAllUsersWithConsultationCount = async (req, res) => {
+  try {
+    const users = await User.findAll({
+      where: {
+        role: "patient", 
+      },
+      attributes: [
+        "user_id",
+        "name",
+        "email",
+        "role",
+        [
+          sequelize.fn("COUNT", sequelize.col("consultations.consultation_id")), // Menghitung jumlah konsultasi
+          "consultation_count", // Alias untuk menghitung jumlah konsultasi
+        ],
+      ],
+      include: [
+        {
+          model: Consultations,
+          as: "consultations",  // Menggunakan alias 'consultations' sesuai asosiasi
+          attributes: [],        // Tidak mengambil data lain dari tabel Consultations
+        },
+      ],
+      group: ["User.user_id"], // Kelompokkan hasil berdasarkan user_id
+      raw: true,  // Menggunakan raw query untuk hasil yang lebih sederhana
+    });
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+    res.status(200).json({
+      message: "Users retrieved successfully",
+      users,
+    });
+  } catch (error) {
+    console.error("Error retrieving users with consultation count:", error.message);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+

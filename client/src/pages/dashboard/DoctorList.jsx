@@ -39,7 +39,6 @@ export default function DoctorList() {
                     const startTime = startHours * 60 + startMinutes;
                     const endTime = endHours * 60 + endMinutes;
 
-                    // Show doctors whose schedule is within the current time
                     return currentTime >= startTime && currentTime <= endTime;
                 });
 
@@ -181,6 +180,14 @@ export default function DoctorList() {
                     <AlertDescription>{alertMessage}</AlertDescription>
                 </Alert>
             )}
+
+            <Card className="rounded-lg border border-gray-200 mb-4">
+                <CardHeader className="bg-gray-100 p-4 rounded-t-lg">
+                    <CardTitle className="text-xl font-semibold text-gray-800">
+                        Jadwal Konsultasi yang tersedia
+                    </CardTitle>
+                </CardHeader>
+            </Card>
 
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {doctors.length > 0 ? (

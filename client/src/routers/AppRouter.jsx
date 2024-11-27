@@ -14,6 +14,7 @@ import BlockedRoute from "./BlockedRoute";
 import { Staff } from "@/pages/dashboard/Staff";
 import AddDoctor from "@/pages/dashboard/AddDoctor";
 import Consultations from "@/pages/dashboard/Consultations";
+import User from "@/pages/dashboard/User";
 const router = createBrowserRouter([
     {
         path: "/",
@@ -42,6 +43,12 @@ const router = createBrowserRouter([
                 path: "consultations",
                 element: (
                     <Consultations />
+                ),
+            },
+            {
+                path: "history",
+                element: (
+                    <PatientHistory />
                 ),
             },
         ],
@@ -108,6 +115,12 @@ const router = createBrowserRouter([
                 path: "consultations",
                 element: (
                     <Consultations />
+                ),
+            },
+            {
+                path: "users",
+                element: (
+                    <User />
                 ),
             }
         ],

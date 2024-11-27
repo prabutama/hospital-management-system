@@ -87,11 +87,11 @@ export function AppSidebar({
           {
             title: "Pengajuan Pemeriksaan",
             url: "/doctor/dashboard/consultations",
-            icon: ClipboardList,
+            icon: History,
           },
           {
-            title: "List Pemeriksaan",
-            url: "#",
+            title: "Riwayat Pemeriksaan",
+            url: "/doctor/dashboard/history",
             icon: LayoutList,
           },
         ],
@@ -116,6 +116,11 @@ export function AppSidebar({
         icon: SquareActivity,
         items: [
           {
+            title: "Pengguna",
+            url: "/staff/dashboard/users",
+            icon: Users,
+          },
+          {
             title: "List Dokter",
             url: "/staff/dashboard/doctors",
             icon: LayoutList,
@@ -129,6 +134,11 @@ export function AppSidebar({
             title: "Pengajuan Pemeriksaan",
             url: "/staff/dashboard/consultations",
             icon: ClipboardList,
+          },
+          {
+            title: "Riwayat Pemeriksaan",
+            url: "/staff/dashboard/history",
+            icon: History,
           },
         ],
       },

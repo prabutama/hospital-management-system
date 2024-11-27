@@ -47,7 +47,14 @@ module.exports = (sequelize, DataTypes) => {
       as: "Schedules",
       onDelete: "CASCADE",
     });
+    
+    User.hasMany(models.Consultations, {
+      foreignKey: "pasien_id", // Menggunakan foreignKey 'pasien_id'
+      as: "consultations", // Alias untuk asosiasi ke konsultasi
+      onDelete: "CASCADE",
+    });
   };
+  
 
   return User;
 };

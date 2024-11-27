@@ -10,6 +10,7 @@ const {
   responseAppointments,
   updateRequestAppointment,
   deleteAppointments,
+  getAllUsersWithConsultationCount,
 } = require("../controllers/consultationController");
 
 router.post("/", authenticateToken, checkRole(["patient"]), requestAppointment);
@@ -48,6 +49,13 @@ router.delete(
   authenticateToken,
   checkRole(["staff"]),
   deleteAppointments
+);
+
+router.get(
+  "/user-count",
+  authenticateToken,
+  checkRole(["staff"]),
+  getAllUsersWithConsultationCount
 );
 
 module.exports = router;

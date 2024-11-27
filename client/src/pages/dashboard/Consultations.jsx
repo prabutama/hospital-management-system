@@ -99,7 +99,7 @@ const Consultations = () => {
             const token = localStorage.getItem("token");
             await axios.put(
                 `http://localhost:3000/api/consultation/doctor/${id}`,
-                { response: "Belum ada diagnosa", status: "accepted" },
+                { response: null, status: "accepted" },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
