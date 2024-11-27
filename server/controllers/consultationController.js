@@ -175,7 +175,7 @@ exports.getAppointmentsByPatient = async (req, res) => {
         "dd MMMM yyyy, hh:mm a"
       ),
       doctor: {
-        name: appointment.dokter?.name || "Unknown", // Tangani jika `doctor` tidak ditemukan
+        name: appointment.dokter?.name || "Unknown", 
       },
     }));
 

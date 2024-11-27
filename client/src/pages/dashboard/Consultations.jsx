@@ -63,7 +63,7 @@ const Consultations = () => {
             });
 
             const sortedData = mappedData.sort((a, b) => {
-                const order = { accepted: 1, pending: 2, rejected: 3 };
+                const order = { pending: 1, accepted: 2, rejected: 3 };
                 return order[a.status] - order[b.status];
             });
 

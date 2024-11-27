@@ -60,7 +60,7 @@ export default function PatientHistory() {
             });
 
             const sortedData = mappedData.sort((a, b) => {
-                const order = { accepted: 1, pending: 2, rejected: 3 };
+                const order = { pending: 1, accepted: 2, rejected: 3 };
                 return order[a.status] - order[b.status];
             });
 
@@ -101,17 +101,17 @@ export default function PatientHistory() {
 
     return (
         <Card className="shadow-md border">
-            <h3 className="text-lg font-semibold p-4 border-b">Health History</h3>
+            <h3 className="text-lg font-semibold p-4 border-b">Riwayat Konsultasi</h3>
             <div className="overflow-x-auto">
                 <Table>
                     <TableHeader>
                         <TableRow className="bg-gray-100">
-                            <TableHead>Date</TableHead>
-                            <TableHead>Patient's Name</TableHead>
-                            <TableHead>Doctor's Name</TableHead>
-                            <TableHead>Complaint</TableHead>
+                            <TableHead>Tanggal Konsultasi</TableHead>
+                            <TableHead>Nama Pasien</TableHead>
+                            <TableHead>Nama Dokter</TableHead>
+                            <TableHead>Keluhan</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Diagnosis Result</TableHead>
+                            <TableHead>Hasil Diagnosa</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

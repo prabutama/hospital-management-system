@@ -29,7 +29,7 @@ router.get(
 router.get(
   "/list-appointment/",
   authenticateToken,
-  checkRole(["staff"]),
+  checkRole(["staff", "doctor"]),
   getAllAppointments
 );
 router.put(
