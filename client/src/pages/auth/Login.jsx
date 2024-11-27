@@ -39,6 +39,7 @@ export function Login() {
                 variant: "success",
             });
 
+
             setTimeout(() => {
                 const route = user.role === "patient"
                     ? "/patient/dashboard/doctors" :
@@ -63,11 +64,11 @@ export function Login() {
     return (
         <>
             <Navbar />
-            <div className="flex items-center justify-center min-h-screen bg-gray-50">
+            <div className="flex items-center justify-center min-h-screen bg-gray-200">
                 <Card className="w-full max-w-sm p-6 space-y-6 bg-white shadow-lg rounded-xl">
                     <div className="text-center">
-                        <h2 className="text-3xl font-bold text-gray-900">Login</h2>
-                        <p className="mt-2 text-gray-600">Welcome back to HospitalMS</p>
+                        <h2 className="text-3xl font-bold text-teal-400 font-poppins">Login</h2>
+                        <p className="mt-2 text-slate-600 font-poppins">Welcome back to Healthify</p>
                     </div>
                     {alert.message && (
                         <Alert
@@ -83,7 +84,7 @@ export function Login() {
                     <form onSubmit={handleLogin} className="space-y-4">
                         {/* Email Input */}
                         <div>
-                            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                            <Label htmlFor="email" className="text-sm font-medium font-poppins text-gray-700">
                                 Email Address
                             </Label>
                             <Input
@@ -93,13 +94,13 @@ export function Login() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="mt-2 p-2 border border-gray-300 rounded-md w-full"
+                                className="mt-2 p-2 border border-gray-300 rounded-md w-full font-poppins"
                             />
                         </div>
 
                         {/* Password Input */}
                         <div>
-                            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                            <Label htmlFor="password" className="text-sm font-medium text-gray-700 font-poppins">
                                 Password
                             </Label>
                             <Input
@@ -109,28 +110,21 @@ export function Login() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
-                                className="mt-2 p-2 border border-gray-300 rounded-md w-full"
+                                className="mt-2 p-2 border border-gray-300 rounded-md w-full font-poppins"
                             />
                         </div>
 
                         {/* Submit Button */}
                         <div>
-                            <Button type="submit" className="w-full bg-black text-white hover:bg-black" disabled={loading}>
+                            <Button type="submit" className="w-full bg-teal-400 text-white hover:bg-teal-500 font-poppins" disabled={loading}>
                                 {loading ? "Logging in..." : "Login"}
                             </Button>
                         </div>
                     </form>
 
-                    {/* Forgot Password Link */}
-                    <div className="text-center">
-                        <a href="#" className="text-sm text-black hover:underline">
-                            Forgot your password?
-                        </a>
-                    </div>
-
                     {/* Register Link */}
                     <div className="text-center mt-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 font-poppins">
                             Don't have an account?{" "}
                             <a href="/register" className="text-black hover:underline">
                                 Register here

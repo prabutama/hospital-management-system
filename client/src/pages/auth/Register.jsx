@@ -54,11 +54,11 @@ export function Register() {
     return (
         <>
             <Navbar />
-            <div className="flex items-center justify-center min-h-screen bg-gray-50">
+            <div className="flex items-center justify-center min-h-screen bg-gray-200 font-poppins">
                 <Card className="w-full max-w-sm p-6 space-y-6 bg-white shadow-lg rounded-xl">
                     <div className="text-center">
-                        <h2 className="text-3xl font-bold text-gray-900">Create an Account</h2>
-                        <p className="mt-2 text-gray-600">
+                        <h2 className="text-3xl font-bold text-teal-400">Create an Account</h2>
+                        <p className="mt-2 text-slate-600">
                             Welcome to HospitalMS. Please create an account to get started.
                         </p>
                     </div>
@@ -141,7 +141,7 @@ export function Register() {
                         <div>
                             <Button
                                 type="submit"
-                                className="w-full bg-black text-white hover:bg-black"
+                                className="w-full bg-teal-400 text-white hover:bg-teal-400"
                                 disabled={loading}
                             >
                                 {loading ? "Registering..." : "Register"}

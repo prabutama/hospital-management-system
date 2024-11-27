@@ -21,14 +21,17 @@ export function Navbar() {
         <nav className="w-full bg-white border-b border-gray-200 shadow sticky top-0 z-50">
             <div className="container mx-auto px-4 flex justify-between items-center h-16">
                 {/* Logo */}
-                <div className="text-2xl font-bold text-black">HospitalMS</div>
+                <div className="text-2xl font-bold text-teal-400 font-poppins tracking-wider">Healthify</div>
 
                 {/* Navigation Links */}
                 <div className="hidden md:flex gap-6">
-                    <a href="#" className="text-gray-700 hover:text-black">
+                    <a href="/" className="text-teal-400 hover:text-teal-500">
+                        Home
+                    </a>
+                    <a href="#" className="text-teal-400 hover:text-teal-500">
                         About
                     </a>
-                    <a href="#" className="text-gray-700 hover:text-black">
+                    <a href="#" className="text-teal-400 hover:text-teal-500">
                         Services
                     </a>
                 </div>
@@ -58,7 +61,7 @@ export function Navbar() {
                         </DropdownMenu>
                     ) : (
                         <Link to="/login">
-                            <Button variant="default" className="bg-black text-white hover:bg-black">
+                            <Button variant="default" className="bg-teal-400 text-white hover:bg-teal-500 tracking-wider">
                                 Login
                             </Button>
                         </Link>

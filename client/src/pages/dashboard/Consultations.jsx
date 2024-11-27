@@ -207,43 +207,75 @@ const Consultations = () => {
             < div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" >
                 {
                     data.map((row) => (
-                        <Card key={row.id} className="shadow-lg rounded-lg border border-gray-300 bg-white">
-                            <CardHeader className="p-4">
-                                {user.role === "doctor" ? (
-                                    <p className="text-lg font-semibold">Nama Pasien: {row.namaPasien}</p>
-                                ) : user.role === "patient" ? (
-                                    <p className="text-lg font-semibold">Nama Dokter: dr. {row.namaDokter}</p>
-                                ) : user.role === "staff" ? (
-                                    <>
-                                        <p className="text-lg font-semibold">Nama Dokter: dr. {row.namaDokter}</p>
-                                        <p className="text-lg font-semibold">Nama Pasien: {row.namaPasien}</p>
-                                    </>
-                                ) : null}
-                                <p className="text-sm text-gray-500">{row.tanggalPengajuan}</p>
+                        <Card
+                            key={row.id}
+                            className="shadow-md rounded-lg border bg-white border-gray-300 transition-all duration-300 ease-in-out font-poppins"
+                        >
+                            {/* Header */}
+                            <CardHeader
+                                className={`p-4 rounded-t-lg ${row.status === "pending"
+                                    ? "bg-gradient-to-r from-yellow-400 to-yellow-500"
+                                    : row.status === "accepted"
+                                        ? "bg-gradient-to-r from-green-400 to-green-500"
+                                        : "bg-gradient-to-r from-red-400 to-red-500"
+                                    }`}
+                            >
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        {user.role === "doctor" ? (
+                                            <p className="text-lg font-semibold text-white">Nama Pasien: {row.namaPasien}</p>
+                                        ) : user.role === "patient" ? (
+                                            <p className="text-lg font-semibold text-white">Nama Dokter: dr. {row.namaDokter}</p>
+                                        ) : user.role === "staff" ? (
+                                            <>
+                                                <p className="text-lg font-semibold text-white">Nama Dokter: dr. {row.namaDokter}</p>
+                                                <p className="text-lg font-semibold text-white">Nama Pasien: {row.namaPasien}</p>
+                                            </>
+                                        ) : null}
+                                    </div>
+                                    <p className="text-sm text-white">{row.tanggalPengajuan}</p>
+                                </div>
                             </CardHeader>
-                            <CardContent className="p-4">
-                                <p>
+
+                            {/* Content */}
+                            <CardContent className="p-6 space-y-3">
+                                <p className="text-gray-700">
                                     <strong>Keluhan:</strong> {row.keluhan}
                                 </p>
-                                <p>
+                                <p className="text-gray-700">
                                     <strong>Diagnosa:</strong> {row.penyakit}
                                 </p>
-                                <p>
-                                    <strong>Status:</strong> <span className={`font-semibold ${row.status === 'pending' ? 'text-yellow-600' : row.status === 'accepted' ? 'text-green-600' : 'text-red-600'}`}>{row.status}</span>
+                                <p className="text-gray-700 flex items-center">
+                                    <strong>Status:</strong>
+                                    <span
+                                        className={`ml-2 font-semibold flex items-center ${row.status === "pending"
+                                            ? "text-yellow-600"
+                                            : row.status === "accepted"
+                                                ? "text-green-600"
+                                                : "text-red-600"
+                                            }`}
+                                    >
+                                        {row.status === "pending" && <span className="mr-1">⏳</span>}
+                                        {row.status === "accepted" && <span className="mr-1">✅</span>}
+                                        {row.status === "rejected" && <span className="mr-1">❌</span>}
+                                        {row.status}
+                                    </span>
                                 </p>
                             </CardContent>
-                            <CardFooter className="flex justify-end p-4">
+
+                            {/* Footer */}
+                            <CardFooter className="flex justify-end p-4 bg-gray-50 rounded-b-lg">
                                 {user.role === "doctor" && row.status === "pending" && (
                                     <>
                                         <Button
                                             variant="default"
                                             onClick={() => handleAccepted(row.id)}
-                                            className="mr-2"
+                                            className="mr-2 bg-green-500 text-white hover:bg-green-600"
                                         >
                                             Setuju
                                         </Button>
                                         <Button
-                                            className="bg-gray-600 hover:bg-gray-700"
+                                            className="bg-red-500 text-white hover:bg-red-600"
                                             variant="destructive"
                                             onClick={() => handleReject(row.id)}
                                         >
@@ -254,6 +286,7 @@ const Consultations = () => {
                                 {user.role === "doctor" && row.status === "accepted" && (
                                     <Button
                                         variant="default"
+                                        className="bg-teal-400 text-white hover:bg-teal-500"
                                         onClick={() => openDialog(row.id, row.keluhan, row.namaPasien)}
                                     >
                                         {row.response !== null ? "Edit Diagnosa" : "Input Diagnosa"}
@@ -263,7 +296,6 @@ const Consultations = () => {
                         </Card>
                     ))
                 }
-
                 {
                     isDialogOpen && (
                         <div

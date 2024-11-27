@@ -6,6 +6,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, Dialog
 import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"; // Import Alert
+import { CircleUser } from "lucide-react";
 
 export default function DoctorList() {
     const [doctors, setDoctors] = useState([]);
@@ -183,7 +184,7 @@ export default function DoctorList() {
 
             <Card className="rounded-lg border border-gray-200 mb-4">
                 <CardHeader className="bg-gray-100 p-4 rounded-t-lg">
-                    <CardTitle className="text-xl font-semibold text-gray-800">
+                    <CardTitle className="text-xl font-semibold text-teal-400 font-poppins">
                         Jadwal Konsultasi yang tersedia
                     </CardTitle>
                 </CardHeader>
@@ -192,28 +193,45 @@ export default function DoctorList() {
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
                 {doctors.length > 0 ? (
                     doctors.map((doctor) => (
-                        <Card key={doctor.dokter_id} className="shadow-lg rounded-lg border border-gray-200">
-                            <CardHeader className="bg-gray-100 p-4 rounded-t-lg">
-                                <CardTitle className="text-xl font-semibold text-gray-800">
+                        <Card
+                            key={doctor.dokter_id}
+                            className="shadow-lg rounded-xl border border-gray-300 hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-105"
+                        >
+                            {/* Header */}
+                            <CardHeader
+                                className="bg-gradient-to-r from-teal-400 to-blue-300 p-4 rounded-t-lg flex items-center space-x-4"
+                            >
+                                <p>
+                                    <CircleUser className="w-12 h-12 text-white ms-5" />
+                                </p>
+                                <CardTitle className="text-xl font-bold text-white capitalize">
                                     Dr. {toCapitalCase(doctor.Doctor.name)}
                                 </CardTitle>
                             </CardHeader>
-                            <CardContent className="p-4">
-                                <p className="text-sm text-gray-600">
-                                    <strong>Jadwal Konsultasi:</strong> {formatTimeDisplay(doctor.start_time)} - {formatTimeDisplay(doctor.end_time)}
-                                </p>
+
+                            {/* Content */}
+                            <CardContent className="p-6 space-y-4">
+                                <div className="text-sm text-gray-700">
+                                    <strong className="block text-gray-900">Jadwal Konsultasi:</strong>
+                                    <p className="text-gray-600">{formatTimeDisplay(doctor.start_time)} - {formatTimeDisplay(doctor.end_time)}</p>
+                                </div>
+                                <div className="border-t border-gray-200 pt-4">
+                                    <p className="text-xs text-gray-500">Pastikan jadwal sesuai dengan waktu luang Anda.</p>
+                                </div>
                             </CardContent>
+
+                            {/* Footer */}
                             <CardFooter className="p-4">
                                 {user.role === "patient" ? (
                                     <Button
-                                        className="w-full bg-black text-white hover:bg-black"
+                                        className="w-full bg-teal-500 text-white hover:bg-teal-600 rounded-lg py-2 font-medium transition-all duration-300 ease-in-out"
                                         onClick={() => handleConsultationRequest(doctor)}
                                     >
                                         Ajukan Konsultasi
                                     </Button>
                                 ) : user.role === "staff" ? (
                                     <Button
-                                        className="w-full bg-black text-white hover:bg-black"
+                                        className="w-full bg-teal-500 text-white hover:bg-teal-600 rounded-lg py-2 font-medium transition-all duration-300 ease-in-out"
                                         onClick={() => handleEditSchedule(doctor)}
                                     >
                                         Edit Jadwal
@@ -229,14 +247,14 @@ export default function DoctorList() {
 
             {/* Dialog for form */}
             {selectedDoctor && (
-                <Dialog open={!!selectedDoctor} onOpenChange={() => setSelectedDoctor(null)}>
+                <Dialog open={!!selectedDoctor} onOpenChange={() => setSelectedDoctor(null)} className="max-w-lg mx-auto">
                     <DialogTrigger />
-                    <DialogContent className="p-4">
+                    <DialogContent className="p-6 bg-white rounded-lg shadow-xl space-y-6">
                         <DialogHeader>
-                            <DialogTitle>
+                            <DialogTitle className="text-2xl font-semibold text-gray-800">
                                 {formAction === "edit" ? "Edit Jadwal" : "Ajukan Konsultasi"}
                             </DialogTitle>
-                            <DialogDescription>
+                            <DialogDescription className="text-sm text-gray-600">
                                 {formAction === "edit" ? (
                                     <p>Update jadwal untuk Dr. {toCapitalCase(selectedDoctor.Doctor.name)}</p>
                                 ) : (
@@ -245,40 +263,49 @@ export default function DoctorList() {
                             </DialogDescription>
                         </DialogHeader>
 
+                        {/* Form Content */}
                         {formAction === "edit" ? (
-                            <div>
+                            <div className="space-y-4">
                                 <Input
                                     type="hidden"
                                     value={selectedDoctor.Doctor?.name}
                                     name="doctor_name"
                                 />
-                                <Input
-                                    type="time"
-                                    value={selectedDoctor.start_time}
-                                    onChange={(e) => setSelectedDoctor({ ...selectedDoctor, start_time: e.target.value })}
-                                    className="mt-2"
-                                />
-                                <Input
-                                    type="time"
-                                    value={selectedDoctor.end_time}
-                                    onChange={(e) => setSelectedDoctor({ ...selectedDoctor, end_time: e.target.value })}
-                                    className="mt-2"
-                                />
+                                <div>
+                                    <label className="text-sm font-medium text-gray-700">Jam Mulai</label>
+                                    <Input
+                                        type="time"
+                                        value={selectedDoctor.start_time}
+                                        onChange={(e) => setSelectedDoctor({ ...selectedDoctor, start_time: e.target.value })}
+                                        className="mt-2 p-3 border border-gray-300 rounded-lg w-full focus:ring-teal-500 focus:border-teal-500"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-sm font-medium text-gray-700">Jam Selesai</label>
+                                    <Input
+                                        type="time"
+                                        value={selectedDoctor.end_time}
+                                        onChange={(e) => setSelectedDoctor({ ...selectedDoctor, end_time: e.target.value })}
+                                        className="mt-2 p-3 border border-gray-300 rounded-lg w-full focus:ring-teal-500 focus:border-teal-500"
+                                    />
+                                </div>
                             </div>
                         ) : (
                             <div>
+                                <label className="text-sm font-medium text-gray-700">Keluhan Anda</label>
                                 <textarea
-                                    className="border p-2 w-full"
+                                    className="mt-2 border p-3 rounded-lg w-full h-32 text-gray-700 focus:ring-teal-500 focus:border-teal-500"
                                     value={consultationRequest}
                                     onChange={(e) => setConsultationRequest(e.target.value)}
                                     placeholder="Tuliskan keluhan Anda"
-                                    rows={4}
                                 />
                             </div>
                         )}
-                        <DialogFooter>
+
+                        {/* Footer */}
+                        <DialogFooter className="flex justify-end space-x-4">
                             <Button
-                                className="w-full"
+                                className="w-full bg-teal-500 text-white hover:bg-teal-600 rounded-lg py-2 font-medium transition-all"
                                 onClick={handleSubmit}
                                 disabled={loading}
                             >
@@ -288,6 +315,7 @@ export default function DoctorList() {
                     </DialogContent>
                 </Dialog>
             )}
+
         </div>
     );
 }

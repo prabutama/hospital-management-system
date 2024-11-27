@@ -40,7 +40,7 @@ export function Layout({ children = [], showNavbar = false, showSidebar = false}
                                     </BreadcrumbItem>
                                     <BreadcrumbSeparator className="hidden md:block" />
                                     <BreadcrumbItem>
-                                        <BreadcrumbPage>{ user.role }</BreadcrumbPage>
+                                        <BreadcrumbPage className="text-teal-400 font-semibold">{ user.role }</BreadcrumbPage>
                                     </BreadcrumbItem>
                                 </BreadcrumbList>
                             </Breadcrumb>

@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function DashboardHeader({ user }) {
     return (
-        <header className="p-4 shadow-sm rounded-lg border">
+        <header className="p-4 shadow-sm rounded-lg border bg-teal-400 text-white font-poppins">
             <div className="flex flex-col items-start">
                 {/* Dynamic greeting message based on role */}
                 {user.role === "patient" && (

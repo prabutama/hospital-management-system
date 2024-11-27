@@ -18,7 +18,7 @@ import User from "@/pages/dashboard/User";
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <Home />,
+        element: <BlockedRoute><Home /></BlockedRoute>,
     },
     {
         path: "/login",
@@ -72,7 +72,7 @@ const router = createBrowserRouter([
             {
                 path: "doctors",
                 element: (
-                    <DoctorList  />
+                    <DoctorList />
                 ),
             },
             {
